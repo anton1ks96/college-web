@@ -1,13 +1,12 @@
-import React, { useState } from 'react';
+import React, { useEffect } from 'react';
 import { useForm } from 'react-hook-form';
-
-interface LoginFormData {
-    username: string;
-    password: string;
-}
+import { useNavigate } from 'react-router-dom';
+import { useAuthStore } from '../../stores/useAuthStore';
+import type { LoginFormData } from '../../types';
 
 const LoginPage: React.FC = () => {
-    const [isLoading, setIsLoading] = useState(false);
+    const navigate = useNavigate();
+    const { login, isLoading, error, clearError, isAuthenticated } = useAuthStore();
 
     const {
         register,
@@ -15,15 +14,24 @@ const LoginPage: React.FC = () => {
         formState: { errors },
     } = useForm<LoginFormData>();
 
-    const onSubmit = async (data: LoginFormData) => {
-        setIsLoading(true);
-        // Здесь будет логика отправки в auth-svc
-        console.log('Login attempt:', data);
+    useEffect(() => {
+        if (isAuthenticated) {
+            navigate('/dashboard');
+        }
+    }, [isAuthenticated, navigate]);
 
-        // Имитация запроса
-        setTimeout(() => {
-            setIsLoading(false);
-        }, 2000);
+    useEffect(() => {
+        return () => clearError();
+    }, [clearError]);
+
+    const onSubmit = async (data: LoginFormData) => {
+        try {
+            await login(data);
+            navigate('/dashboard');
+            // eslint-disable-next-line @typescript-eslint/no-unused-vars
+        } catch (error) {
+            // Ошибка уже обработана в store
+        }
     };
 
     return (
@@ -46,64 +54,46 @@ const LoginPage: React.FC = () => {
                             </p>
                         </div>
 
+                        {error && (
+                            <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded-lg">
+                                <p className="text-sm text-red-600">{error}</p>
+                            </div>
+                        )}
+
                         <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
                             <div>
-                                <label
-                                    htmlFor="username"
-                                    className="block text-sm font-medium text-gray-700 mb-2"
-                                >
+                                <label htmlFor="username" className="block text-sm font-medium text-gray-700 mb-2">
                                     Логин
                                 </label>
                                 <input
                                     id="username"
                                     type="text"
                                     placeholder="i00s0000"
-                                    className={`
-                    w-full px-4 py-3 border rounded-lg
-                    placeholder-gray-400 
+                                    className={`w-full px-4 py-3 border rounded-lg placeholder-gray-400 
                     focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent
                     transition-all duration-200
-                    ${errors.username
-                                        ? 'border-red-500 bg-red-50'
-                                        : 'border-gray-300 bg-purple-50/30'
-                                    }
-                  `}
+                    ${errors.username ? 'border-red-500 bg-red-50' : 'border-gray-300 bg-purple-50/30'}`}
                                     {...register('username', {
-                                        required: 'Введите логин',
-                                        pattern: {
-                                            value: /^[a-z]\d{2}[a-z]\d{4}$/i,
-                                            message: 'Неверный формат логина (пример: i00s0000)'
-                                        }
+                                        required: 'Введите логин'
                                     })}
                                     disabled={isLoading}
                                 />
                                 {errors.username && (
-                                    <p className="mt-1 text-sm text-red-600">
-                                        {errors.username.message}
-                                    </p>
+                                    <p className="mt-1 text-sm text-red-600">{errors.username.message}</p>
                                 )}
                             </div>
 
                             <div>
-                                <label
-                                    htmlFor="password"
-                                    className="block text-sm font-medium text-gray-700 mb-2"
-                                >
+                                <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-2">
                                     Пароль
                                 </label>
                                 <input
                                     id="password"
                                     type="password"
-                                    className={`
-                    w-full px-4 py-3 border rounded-lg
-                    placeholder-gray-400
+                                    className={`w-full px-4 py-3 border rounded-lg placeholder-gray-400
                     focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent
                     transition-all duration-200
-                    ${errors.password
-                                        ? 'border-red-500 bg-red-50'
-                                        : 'border-gray-300 bg-purple-50/30'
-                                    }
-                  `}
+                    ${errors.password ? 'border-red-500 bg-red-50' : 'border-gray-300 bg-purple-50/30'}`}
                                     {...register('password', {
                                         required: 'Введите пароль',
                                         minLength: {
@@ -114,52 +104,30 @@ const LoginPage: React.FC = () => {
                                     disabled={isLoading}
                                 />
                                 {errors.password && (
-                                    <p className="mt-1 text-sm text-red-600">
-                                        {errors.password.message}
-                                    </p>
+                                    <p className="mt-1 text-sm text-red-600">{errors.password.message}</p>
                                 )}
                             </div>
 
                             <button
                                 type="submit"
                                 disabled={isLoading}
-                                className={`
-                  w-full py-3 px-4 rounded-lg
-                  font-medium text-white
+                                className={`w-full py-3 px-4 rounded-lg font-medium text-white
                   transition-all duration-200 transform
                   ${isLoading
                                     ? 'bg-purple-400 cursor-not-allowed'
-                                    : 'bg-gradient-to-r from-purple-600 to-purple-700 hover:from-purple-700 hover:to-purple-800 hover:shadow-lg hover:-translate-y-0.5'
-                                }
-                  focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2
-                `}
+                                    : 'bg-gradient-to-r from-purple-600 to-purple-700 hover:from-purple-700 hover:to-purple-800 hover:shadow-lg hover:-translate-y-0.5'}
+                  focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2`}
                             >
                                 {isLoading ? (
                                     <span className="flex items-center justify-center">
-                    <svg
-                        className="animate-spin -ml-1 mr-3 h-5 w-5 text-white"
-                        fill="none"
-                        viewBox="0 0 24 24"
-                    >
-                      <circle
-                          className="opacity-25"
-                          cx="12"
-                          cy="12"
-                          r="10"
-                          stroke="currentColor"
-                          strokeWidth="4"
-                      />
-                      <path
-                          className="opacity-75"
-                          fill="currentColor"
-                          d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-                      />
+                    <svg className="animate-spin -ml-1 mr-3 h-5 w-5 text-white" fill="none" viewBox="0 0 24 24">
+                      <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+                      <path className="opacity-75" fill="currentColor"
+                            d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
                     </svg>
                     Выполняется вход...
                   </span>
-                                ) : (
-                                    'Войти'
-                                )}
+                                ) : 'Войти'}
                             </button>
                         </form>
                     </div>
@@ -167,9 +135,7 @@ const LoginPage: React.FC = () => {
             </div>
 
             <footer className="py-4 text-center">
-                <p className="text-sm text-gray-600">
-                    © 2025 Колледж Цифровых Технологий
-                </p>
+                <p className="text-sm text-gray-600">© 2025 Колледж Цифровых Технологий</p>
             </footer>
         </div>
     );
