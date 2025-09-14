@@ -2,14 +2,12 @@ import { useEffect } from 'react';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { useAuthStore } from './stores/useAuthStore';
 import { ProtectedRoute } from './components/ProtectedRoute';
-import { Layout } from './components/Layout/Layout';
+import { StudentLayout } from './components/Layout/StudentLayout';
 import LoginPage from './pages/Login/LoginPage';
-import { StudentDashboard } from './pages/Dashboard/StudentDashboard';
-import { TeacherDashboard } from './pages/Dashboard/TeacherDashboard';
-import { AdminDashboard } from './pages/Dashboard/AdminDashboard';
+import { ChatPage } from './pages/Student/ChatPage';
 
 function App() {
-    const { checkAuth, isLoading, user } = useAuthStore();
+    const { checkAuth, isLoading } = useAuthStore();
 
     useEffect(() => {
         checkAuth();
@@ -26,33 +24,30 @@ function App() {
         );
     }
 
-    const getDashboardByRole = () => {
-        if (!user) return <Navigate to="/login" replace />;
-
-        switch (user.role) {
-            case 'student':
-                return <StudentDashboard />;
-            case 'teacher':
-                return <TeacherDashboard />;
-            case 'admin':
-                return <AdminDashboard />;
-            default:
-                return <StudentDashboard />;
-        }
-    };
-
     return (
         <BrowserRouter>
             <Routes>
                 <Route path="/login" element={<LoginPage />} />
 
+                {/* Student routes */}
                 <Route
                     path="/dashboard"
                     element={
-                        <ProtectedRoute>
-                            <Layout>
-                                {getDashboardByRole()}
-                            </Layout>
+                        <ProtectedRoute allowedRoles={['student']}>
+                            <StudentLayout>
+                                <Navigate to="/dashboard/chat" replace />
+                            </StudentLayout>
+                        </ProtectedRoute>
+                    }
+                />
+
+                <Route
+                    path="/dashboard/chat"
+                    element={
+                        <ProtectedRoute allowedRoles={['student']}>
+                            <StudentLayout>
+                                <ChatPage />
+                            </StudentLayout>
                         </ProtectedRoute>
                     }
                 />
