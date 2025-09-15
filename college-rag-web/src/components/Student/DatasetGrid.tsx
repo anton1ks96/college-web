@@ -1,18 +1,14 @@
 import type { FC } from "react";
-
-interface Dataset {
-  id: string;
-  title: string;
-  content: string;
-  createdAt: string;
-  indexed: boolean;
-}
+import type { Dataset } from "../../types/dataset.types";
 
 interface DatasetGridProps {
   datasets: Dataset[];
 }
 
 export const DatasetGrid: FC<DatasetGridProps> = ({ datasets }) => {
+  if (!datasets || !Array.isArray(datasets)) {
+    return null;
+  }
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
       {datasets.map((dataset) => (
@@ -27,11 +23,6 @@ export const DatasetGrid: FC<DatasetGridProps> = ({ datasets }) => {
                 {dataset.title}
               </h3>
             </div>
-
-            {/* Content preview */}
-            <p className="text-sm text-gray-600 line-clamp-3 mb-4">
-              {dataset.content}
-            </p>
 
             {/* Stats */}
             <div className="flex items-center justify-between mb-4">
@@ -50,14 +41,14 @@ export const DatasetGrid: FC<DatasetGridProps> = ({ datasets }) => {
                       d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
                     />
                   </svg>
-                  {new Date(dataset.createdAt).toLocaleDateString("ru-RU")}
+                  {new Date(dataset.created_at).toLocaleDateString("ru-RU")}
                 </span>
               </div>
             </div>
 
             {/* Status badge */}
             <div className="flex items-center justify-between">
-              {dataset.indexed ? (
+              {dataset.indexed_at ? (
                 <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800">
                   ✓ Индексирован
                 </span>
