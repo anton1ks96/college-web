@@ -2,8 +2,8 @@ import type { FC } from "react";
 import { useState, useEffect } from "react";
 import { DatasetSidebar } from "../../components/Student/DatasetSidebar";
 import { ChatInterface } from "../../components/Student/ChatInterface";
-import { datasetApi } from "../../services/datasetApi";
-import type { Dataset } from "../../types/dataset";
+import { datasetService } from "../../services/dataset.service";
+import type { Dataset } from "../../types/dataset.types";
 
 // Интерфейс Dataset перенесен в src/types/dataset.ts
 
@@ -18,8 +18,8 @@ export const ChatPage: FC = () => {
       try {
         setIsLoading(true);
         setError(null);
-        const data = await datasetApi.getDatasets();
-        setDatasets(data);
+        const response = await datasetService.getDatasets();
+        setDatasets(response.datasets);
       } catch (error) {
         const errorMessage = error instanceof Error ? error.message : "Ошибка при загрузке датасетов";
         setError(errorMessage);

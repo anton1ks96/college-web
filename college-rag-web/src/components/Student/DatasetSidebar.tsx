@@ -1,5 +1,5 @@
 import type { FC } from "react";
-import type { Dataset } from "../../types/dataset";
+import type { Dataset } from "../../types/dataset.types";
 
 interface DatasetSidebarProps {
   datasets: Dataset[];
@@ -60,7 +60,6 @@ export const DatasetSidebar: FC<DatasetSidebarProps> = ({
         {/* Список датасетов */}
         {!isLoading && !error && (
           <div className="p-4 space-y-2">
-            {console.log("DatasetSidebar datasets:", datasets)}
             {datasets.length === 0 ? (
               <div className="text-center py-8">
                 <div className="text-gray-400 mb-2">
@@ -104,9 +103,9 @@ export const DatasetSidebar: FC<DatasetSidebarProps> = ({
                   </h3>
                   <div className="flex items-center mt-1 space-x-2">
                     <span className="text-xs text-gray-500">
-                      {new Date(dataset.createdAt || dataset.created_at || '').toLocaleDateString("ru-RU")}
+                      {new Date(dataset.created_at).toLocaleDateString("ru-RU")}
                     </span>
-                    {(dataset.indexed || dataset.is_indexed) ? (
+                    {dataset.indexed_at ? (
                       <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-green-100 text-green-800">
                         Индексирован
                       </span>

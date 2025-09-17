@@ -1,6 +1,6 @@
 import type { FC } from "react";
 import { useState } from "react";
-import type { Dataset } from "../../types/dataset";
+import type { Dataset } from "../../types/dataset.types";
 import { chatApi } from "../../services/chatApi";
 import type { Citation } from "../../types/chat";
 
