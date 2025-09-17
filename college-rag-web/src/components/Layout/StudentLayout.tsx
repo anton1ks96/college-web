@@ -27,30 +27,36 @@ export const StudentLayout: FC<StudentLayoutProps> = ({ children }) => {
         <div className="px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-16">
             {/* Left side - Logo and Navigation */}
-            <div className="flex items-center space-x-8">
+            <div className="flex items-center space-x-6">
               <h1 className="text-xl font-semibold text-gray-900">
                 Колледж RAG
               </h1>
 
               {/* Navigation */}
-              <nav className="flex space-x-1">
+              <nav className="flex space-x-4">
                 <button
                   onClick={() => navigate("/dashboard/chat")}
-                  className={`px-4 py-2 rounded-lg font-medium transition-all ${
+                  className={`w-32 px-4 py-2 rounded-2xl font-medium text-white transition-all duration-200 transform hover:shadow-lg hover:-translate-y-0.5 hover:opacity-100 focus:outline-none text-center ${
                     isActive("/dashboard/chat")
-                      ? "bg-purple-100 text-purple-700"
-                      : "text-gray-600 hover:text-gray-900 hover:bg-gray-100"
+                      ? "opacity-90"
+                      : "opacity-80"
                   }`}
+                  style={{
+                    background: "linear-gradient(to right, #9B8BDC 20%, #9605CA 100%)"
+                  }}
                 >
                   Чат
                 </button>
                 <button
                   onClick={() => navigate("/dashboard/datasets")}
-                  className={`px-4 py-2 rounded-lg font-medium transition-all ${
+                  className={`w-32 px-4 py-2 rounded-2xl font-medium text-white transition-all duration-200 transform hover:shadow-lg hover:-translate-y-0.5 hover:opacity-100 focus:outline-none text-center ${
                     isActive("/dashboard/datasets")
-                      ? "bg-purple-100 text-purple-700"
-                      : "text-gray-600 hover:text-gray-900 hover:bg-gray-100"
+                      ? "opacity-90"
+                      : "opacity-80"
                   }`}
+                  style={{
+                    background: "linear-gradient(to right, #9B8BDC 20%, #9605CA 100%)"
+                  }}
                 >
                   Датасеты
                 </button>
