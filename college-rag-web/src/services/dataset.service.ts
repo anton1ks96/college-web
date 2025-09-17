@@ -58,8 +58,29 @@ class DatasetService {
     await coreAPI.delete(`/api/v1/datasets/${id}`);
   }
 
-  async reindexDataset(id: string): Promise<void> {
-    await coreAPI.post(`/api/v1/datasets/${id}/reindex`);
+  async updateDataset(
+    id: string,
+    title: string,
+    content: string,
+  ): Promise<Dataset> {
+    const response = await coreAPI.put<Dataset>(
+      `/api/v1/datasets/${id}`,
+      {
+        title,
+        content
+      },
+      {
+        headers: {
+          "Content-Type": "application/json",
+        },
+      },
+    );
+    return response.data;
+  }
+
+  async reindexDataset(id: string, userId?: string): Promise<void> {
+    const requestBody = userId ? { user_id: userId } : {};
+    await coreAPI.post(`/api/v1/datasets/${id}/reindex`, requestBody);
   }
 }
 

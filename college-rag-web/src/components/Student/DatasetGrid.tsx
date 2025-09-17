@@ -1,11 +1,34 @@
 import type { FC } from "react";
+import { useState } from "react";
 import type { Dataset } from "../../types/dataset.types";
+import { DatasetEditModal } from "./DatasetEditModal";
 
 interface DatasetGridProps {
   datasets: Dataset[];
+  onDatasetUpdated?: () => void;
 }
 
-export const DatasetGrid: FC<DatasetGridProps> = ({ datasets }) => {
+export const DatasetGrid: FC<DatasetGridProps> = ({ datasets, onDatasetUpdated }) => {
+  const [selectedDataset, setSelectedDataset] = useState<Dataset | null>(null);
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+
+  const handleOpenDataset = (dataset: Dataset) => {
+    setSelectedDataset(dataset);
+    setIsEditModalOpen(true);
+  };
+
+  const handleCloseModal = () => {
+    setIsEditModalOpen(false);
+    setSelectedDataset(null);
+  };
+
+  const handleDatasetSaved = () => {
+    setIsEditModalOpen(false);
+    setSelectedDataset(null);
+    if (onDatasetUpdated) {
+      onDatasetUpdated();
+    }
+  };
   if (!datasets || !Array.isArray(datasets)) {
     return null;
   }
@@ -58,13 +81,24 @@ export const DatasetGrid: FC<DatasetGridProps> = ({ datasets }) => {
                 </span>
               )}
 
-              <button className="text-purple-600 hover:text-purple-700 text-sm font-medium">
-                Открыть →
+              <button
+                onClick={() => handleOpenDataset(dataset)}
+                className="text-purple-600 hover:text-purple-700 text-sm font-medium"
+              >
+                Открыть
               </button>
             </div>
           </div>
         </div>
       ))}
+
+      {/* Edit Modal */}
+      <DatasetEditModal
+        dataset={selectedDataset}
+        isOpen={isEditModalOpen}
+        onClose={handleCloseModal}
+        onSave={handleDatasetSaved}
+      />
     </div>
   );
 };

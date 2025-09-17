@@ -90,7 +90,10 @@ export const DatasetsPage: FC = () => {
             </button>
           </div>
         ) : (
-          <DatasetGrid datasets={datasets} />
+          <DatasetGrid
+            datasets={datasets}
+            onDatasetUpdated={fetchDatasets}
+          />
         )}
 
         {/* Create Modal */}
