@@ -1,6 +1,8 @@
 import type { FC } from "react";
 import { useState } from "react";
-import type { Dataset } from "../../pages/Student/ChatPage";
+import type { Dataset } from "../../types/dataset";
+import { chatApi } from "../../services/chatApi";
+import type { Citation } from "../../types/chat";
 
 interface ChatInterfaceProps {
   selectedDataset: string | null;
@@ -12,6 +14,8 @@ interface Message {
   text: string;
   sender: "user" | "assistant";
   timestamp: Date;
+  citations?: Citation[];
+  error?: string;
 }
 
 export const ChatInterface: FC<ChatInterfaceProps> = ({
@@ -21,6 +25,7 @@ export const ChatInterface: FC<ChatInterfaceProps> = ({
   const [messages, setMessages] = useState<Message[]>([]);
   const [inputValue, setInputValue] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   const handleSendMessage = async () => {
     if (!inputValue.trim() || !selectedDataset) return;
@@ -33,20 +38,38 @@ export const ChatInterface: FC<ChatInterfaceProps> = ({
     };
 
     setMessages((prev) => [...prev, userMessage]);
+    const questionText = inputValue;
     setInputValue("");
     setIsLoading(true);
+    setError(null);
 
-    // Имитация ответа
-    setTimeout(() => {
+    try {
+      const response = await chatApi.askQuestion(selectedDataset, questionText);
+
       const assistantMessage: Message = {
         id: (Date.now() + 1).toString(),
-        text: `Я проанализировал ваш вопрос "${inputValue}" в датасете "${datasets.find((d) => d.id === selectedDataset)?.title}". Это демонстрационный ответ.`,
+        text: response.answer,
         sender: "assistant",
         timestamp: new Date(),
       };
+
       setMessages((prev) => [...prev, assistantMessage]);
+    } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : "Произошла неизвестная ошибка";
+      setError(errorMessage);
+
+      const assistantMessage: Message = {
+        id: (Date.now() + 1).toString(),
+        text: "Извините, произошла ошибка при обработке вашего запроса.",
+        sender: "assistant",
+        timestamp: new Date(),
+        error: errorMessage,
+      };
+
+      setMessages((prev) => [...prev, assistantMessage]);
+    } finally {
       setIsLoading(false);
-    }, 1500);
+    }
   };
 
   const selectedDatasetName = selectedDataset
@@ -93,14 +116,27 @@ export const ChatInterface: FC<ChatInterfaceProps> = ({
                   className={`max-w-2xl px-4 py-2 rounded-lg ${
                     message.sender === "user"
                       ? "bg-purple-600 text-white"
+                      : message.error
+                      ? "bg-red-50 border border-red-200 text-red-900"
                       : "bg-white border border-gray-200 text-gray-900"
                   }`}
                 >
                   <p className="text-sm">{message.text}</p>
+
+                  {/* Отображение ошибки */}
+                  {message.error && (
+                    <div className="mt-2 p-2 bg-red-100 border border-red-200 rounded text-xs text-red-700">
+                      <strong>Ошибка:</strong> {message.error}
+                    </div>
+                  )}
+
+
                   <p
                     className={`text-xs mt-1 ${
                       message.sender === "user"
                         ? "text-purple-200"
+                        : message.error
+                        ? "text-red-400"
                         : "text-gray-400"
                     }`}
                   >
@@ -138,6 +174,33 @@ export const ChatInterface: FC<ChatInterfaceProps> = ({
 
       {/* Input area */}
       <div className="border-t border-gray-200 bg-white px-6 py-4">
+        {/* Отображение общей ошибки */}
+        {error && (
+          <div className="mb-4 max-w-4xl mx-auto">
+            <div className="bg-red-50 border border-red-200 rounded-lg p-3">
+              <div className="flex">
+                <div className="flex-shrink-0">
+                  <svg className="h-5 w-5 text-red-400" viewBox="0 0 20 20" fill="currentColor">
+                    <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clipRule="evenodd" />
+                  </svg>
+                </div>
+                <div className="ml-3">
+                  <p className="text-sm text-red-700">{error}</p>
+                </div>
+                <div className="ml-auto pl-3">
+                  <button
+                    onClick={() => setError(null)}
+                    className="inline-flex rounded-md text-red-400 hover:text-red-500 focus:outline-none"
+                  >
+                    <svg className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                      <path fillRule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clipRule="evenodd" />
+                    </svg>
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
         <div className="flex space-x-4 max-w-4xl mx-auto">
           <input
             type="text"
