@@ -37,7 +37,7 @@ export const DatasetGrid: FC<DatasetGridProps> = ({ datasets, onDatasetUpdated }
       {datasets.map((dataset) => (
         <div
           key={dataset.id}
-          className="bg-white rounded-lg shadow-sm border border-gray-200 hover:shadow-md transition-shadow cursor-pointer"
+          className="bg-white rounded-lg shadow-sm border border-gray-200 hover:shadow-md transition-shadow"
         >
           <div className="p-6">
             {/* Header */}
@@ -70,7 +70,7 @@ export const DatasetGrid: FC<DatasetGridProps> = ({ datasets, onDatasetUpdated }
             </div>
 
             {/* Status badge */}
-            <div className="flex items-center justify-between">
+            <div className="mb-4">
               {dataset.indexed_at ? (
                 <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800">
                   ✓ Индексирован
@@ -80,14 +80,18 @@ export const DatasetGrid: FC<DatasetGridProps> = ({ datasets, onDatasetUpdated }
                   ⏳ Ожидает индексации
                 </span>
               )}
-
-              <button
-                onClick={() => handleOpenDataset(dataset)}
-                className="text-purple-600 hover:text-purple-700 text-sm font-medium"
-              >
-                Открыть
-              </button>
             </div>
+
+            {/* Action button */}
+            <button
+              onClick={() => handleOpenDataset(dataset)}
+              className="w-full px-4 py-2 bg-purple-600 text-white text-sm font-medium rounded-md hover:bg-purple-700 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2 transition-colors flex items-center justify-center"
+            >
+              <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+              </svg>
+              Открыть редактор
+            </button>
           </div>
         </div>
       ))}

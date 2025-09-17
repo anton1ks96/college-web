@@ -18,6 +18,8 @@ export const DatasetEditModal: FC<DatasetEditModalProps> = ({
 }) => {
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
+  const [originalTitle, setOriginalTitle] = useState("");
+  const [originalContent, setOriginalContent] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -25,16 +27,21 @@ export const DatasetEditModal: FC<DatasetEditModalProps> = ({
     const loadDatasetContent = async () => {
       if (dataset && isOpen) {
         setTitle(dataset.title);
+        setOriginalTitle(dataset.title);
         setError(null);
         setIsLoading(true);
 
         try {
           // Загружаем полные данные датасета, включая содержимое
           const fullDataset = await datasetService.getDataset(dataset.id);
-          setContent(fullDataset.content || "");
+          const datasetContent = fullDataset.content || "";
+          setContent(datasetContent);
+          setOriginalContent(datasetContent);
         } catch (error: any) {
           setError("Ошибка при загрузке содержимого датасета");
-          setContent(dataset.content || "");
+          const fallbackContent = dataset.content || "";
+          setContent(fallbackContent);
+          setOriginalContent(fallbackContent);
         } finally {
           setIsLoading(false);
         }
@@ -44,9 +51,17 @@ export const DatasetEditModal: FC<DatasetEditModalProps> = ({
     loadDatasetContent();
   }, [dataset, isOpen]);
 
+  // Проверяем, были ли изменения
+  const hasChanges = title !== originalTitle || content !== originalContent;
+
   const handleSave = async () => {
     if (!dataset || !title.trim()) {
       setError("Название не может быть пустым");
+      return;
+    }
+
+    if (!hasChanges) {
+      setError("Нет изменений для сохранения");
       return;
     }
 
@@ -80,11 +95,9 @@ export const DatasetEditModal: FC<DatasetEditModalProps> = ({
 
   const handleCancel = () => {
     onClose();
-    // Сбрасываем изменения
-    if (dataset) {
-      setTitle(dataset.title);
-      setContent(dataset.content || "");
-    }
+    // Сбрасываем изменения к оригинальным значениям
+    setTitle(originalTitle);
+    setContent(originalContent);
     setError(null);
   };
 
@@ -94,19 +107,10 @@ export const DatasetEditModal: FC<DatasetEditModalProps> = ({
     <div className="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full z-50">
       <div className="relative top-10 mx-auto p-5 border w-11/12 md:w-4/5 lg:w-3/4 max-w-4xl shadow-lg rounded-md bg-white">
         {/* Header */}
-        <div className="flex items-center justify-between pb-4 border-b border-gray-200">
+        <div className="pb-4 border-b border-gray-200">
           <h3 className="text-lg font-medium text-gray-900">
             Редактирование датасета
           </h3>
-          <button
-            onClick={handleCancel}
-            className="text-gray-400 hover:text-gray-600"
-            disabled={isLoading}
-          >
-            <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-            </svg>
-          </button>
         </div>
 
         {/* Error message */}
@@ -171,7 +175,7 @@ export const DatasetEditModal: FC<DatasetEditModalProps> = ({
           </button>
           <button
             onClick={handleSave}
-            disabled={isLoading || !title.trim()}
+            disabled={isLoading || !title.trim() || !hasChanges}
             className="px-4 py-2 bg-purple-600 text-white rounded-md hover:bg-purple-700 transition-colors disabled:bg-gray-300 disabled:cursor-not-allowed"
           >
             {isLoading ? "Сохранение..." : "Сохранить"}
