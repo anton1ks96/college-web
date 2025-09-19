@@ -1,8 +1,8 @@
 import { coreAPI } from "../api/client";
 import type {
-  Dataset,
-  DatasetListResponse,
-  CreateDatasetResponse,
+    Dataset,
+    DatasetListResponse,
+    CreateDatasetResponse,
 } from "../types/dataset.types";
 
 class DatasetService {
@@ -78,9 +78,8 @@ class DatasetService {
     return response.data;
   }
 
-  async reindexDataset(id: string, userId?: string): Promise<void> {
-    const requestBody = userId ? { user_id: userId } : {};
-    await coreAPI.post(`/api/v1/datasets/${id}/reindex`, requestBody);
+  async reindexDataset(id: string): Promise<void> {
+      await coreAPI.post(`/api/v1/datasets/${id}/reindex`);
   }
 }
 
