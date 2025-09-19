@@ -37,7 +37,7 @@ export const ChatPage: FC = () => {
 
 
   return (
-    <div className="flex flex-1 overflow-hidden">
+    <div className="flex flex-1 h-full overflow-hidden">
       {/* Sidebar with datasets */}
       <DatasetSidebar
         datasets={datasets}
