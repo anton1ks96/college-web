@@ -1,6 +1,5 @@
 import type { FC } from "react";
 import { useState } from "react";
-import MDEditor from "@uiw/react-md-editor";
 import { useDatasetStore } from "../../stores/useDatasetStore";
 
 interface CreateDatasetModalProps {
@@ -111,35 +110,27 @@ export const CreateDatasetModal: FC<CreateDatasetModalProps> = ({
             />
           </div>
 
-          {/* Markdown Editor */}
+          {/* Content Editor */}
           <div className="flex-1 flex flex-col min-h-0">
             <div className="flex items-center justify-between mb-2 flex-shrink-0">
               <label className="block text-sm font-medium text-gray-700">
-                Содержимое (Markdown) *
+                Содержимое датасета *
               </label>
               <div className="flex items-center space-x-2">
                 <span className="text-xs text-gray-500">
-                  {content.length} символов
+                  Символов: {content.length}
                 </span>
               </div>
             </div>
 
-            <div
-              className="flex-1 overflow-auto border border-gray-300 rounded-lg"
+            <textarea
+              value={content}
+              onChange={(e) => setContent(e.target.value)}
+              className="flex-1 w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent resize-none font-mono text-sm"
+              placeholder="Введите содержимое датасета..."
+              disabled={isLoading}
               style={{ minHeight: "400px" }}
-            >
-              <MDEditor
-                value={content}
-                onChange={(val) => setContent(val || "")}
-                preview="edit"
-                height={400}
-                data-color-mode="light"
-                textareaProps={{
-                  placeholder:
-                    "Начните писать ваш датасет здесь...\n\nИспользуйте Markdown для форматирования:\n# Заголовок\n## Подзаголовок\n**жирный текст**\n*курсив*\n- список\n```код```",
-                }}
-              />
-            </div>
+            />
           </div>
 
           {/* Info */}
