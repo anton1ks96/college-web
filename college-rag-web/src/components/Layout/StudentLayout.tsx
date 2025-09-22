@@ -37,9 +37,9 @@ export const StudentLayout: FC<StudentLayoutProps> = ({ children }) => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 flex flex-col">
+    <div className="h-screen bg-gray-50 flex flex-col overflow-hidden">
       {/* Header */}
-      <header className="bg-white shadow-sm border-b">
+      <header className="bg-white shadow-sm border-b flex-shrink-0">
         <div className="px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center py-2">
             {/* Left side - Logo and Navigation */}
@@ -140,7 +140,7 @@ export const StudentLayout: FC<StudentLayoutProps> = ({ children }) => {
       </header>
 
       {/* Main Content */}
-      <main className="flex-1 flex overflow-hidden">{children}</main>
+      <main className="flex-1 flex overflow-hidden min-h-0">{children}</main>
     </div>
   );
 };

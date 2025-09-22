@@ -77,10 +77,10 @@ export const ChatInterface: FC<ChatInterfaceProps> = ({
     : null;
 
   return (
-    <div className="flex-1 flex flex-col bg-gray-50">
+    <div className="flex-1 flex flex-col bg-gray-50 h-full">
       {/* Selected datasets indicator */}
       {selectedDataset && (
-        <div className="bg-purple-50 border-b border-purple-200 px-6 py-3">
+        <div className="bg-purple-50 border-b border-purple-200 px-6 py-3 flex-shrink-0">
           <div className="flex items-center space-x-2">
             <span className="text-sm text-purple-700 font-medium">
               Поиск в датасете:
@@ -93,7 +93,7 @@ export const ChatInterface: FC<ChatInterfaceProps> = ({
       )}
 
       {/* Messages area */}
-      <div className="flex-1 overflow-y-auto px-6 py-4">
+      <div className="flex-1 overflow-y-auto px-6 py-4 min-h-0">
         {messages.length === 0 ? (
           <div className="flex flex-col items-center justify-center h-full text-gray-500">
             <h3 className="text-xl font-medium text-gray-700 mb-2">
@@ -173,7 +173,7 @@ export const ChatInterface: FC<ChatInterfaceProps> = ({
       </div>
 
       {/* Input area */}
-      <div className="border-t border-gray-200 bg-white px-6 py-4">
+      <div className="border-t border-gray-200 bg-white px-6 py-4 flex-shrink-0">
         {/* Отображение общей ошибки */}
         {error && (
           <div className="mb-4 max-w-4xl mx-auto">
