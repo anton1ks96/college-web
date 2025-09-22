@@ -21,9 +21,6 @@ export const DatasetSidebar: FC<DatasetSidebarProps> = ({
       {/* Header */}
       <div className="p-4 border-b border-gray-200">
         <h2 className="text-lg font-semibold text-gray-900">Мои датасеты</h2>
-        <p className="text-sm text-gray-500 mt-1">
-          Выберите один датасет для поиска
-        </p>
       </div>
 
       {/* Datasets list */}
@@ -135,20 +132,18 @@ export const DatasetSidebar: FC<DatasetSidebarProps> = ({
       </div>
 
       {/* Footer with selected count */}
-      <div className="p-4 border-t border-gray-200 bg-gray-50">
-        <p className="text-sm text-gray-600">
-          {selectedDataset ? (
+      {selectedDataset && (
+        <div className="p-4 border-t border-gray-200 bg-gray-50">
+          <p className="text-sm text-gray-600">
             <span>
               Выбран:{" "}
               <span className="font-medium text-purple-600">
                 {datasets?.find((d) => d.id === selectedDataset)?.title}
               </span>
             </span>
-          ) : (
-            <span className="text-gray-400">Датасет не выбран</span>
-          )}
-        </p>
-      </div>
+          </p>
+        </div>
+      )}
     </aside>
   );
 };

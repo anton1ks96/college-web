@@ -78,28 +78,21 @@ export const ChatInterface: FC<ChatInterfaceProps> = ({
 
   return (
     <div className="flex-1 flex flex-col bg-gray-50 h-full">
-      {/* Selected datasets indicator */}
-      {selectedDataset && (
-        <div className="bg-purple-50 border-b border-purple-200 px-6 py-3 flex-shrink-0">
-          <div className="flex items-center space-x-2">
-            <span className="text-sm text-purple-700 font-medium">
-              Поиск в датасете:
-            </span>
-            <span className="inline-flex items-center px-2 py-1 rounded-md text-xs font-medium bg-purple-100 text-purple-800">
-              {selectedDatasetName}
-            </span>
-          </div>
-        </div>
-      )}
-
       {/* Messages area */}
-      <div className="flex-1 overflow-y-auto px-6 py-4 min-h-0">
+      <div className="flex-1 overflow-y-auto px-6 py-4 min-h-0 relative">
+        {/* Selected datasets indicator - positioned absolutely */}
+        {selectedDataset && (
+          <div className="absolute top-4 left-6 z-10">
+            <div className="inline-flex items-center px-3 py-1.5 rounded-full bg-purple-100 border border-purple-200">
+              <span className="text-xs text-purple-700 font-medium">
+                Поиск в: {selectedDatasetName}
+              </span>
+            </div>
+          </div>
+        )}
         {messages.length === 0 ? (
           <div className="flex flex-col items-center justify-center h-full text-gray-500">
-            <h3 className="text-xl font-medium text-gray-700 mb-2">
-              Начните диалог
-            </h3>
-            <p className="text-sm text-center max-w-md">
+            <p className="text-xm text-center max-w-md">
               {!selectedDataset
                 ? "Выберите датасет слева для начала работы"
                 : "Задайте вопрос, и я найду ответ в выбранном датасете"}
@@ -173,11 +166,11 @@ export const ChatInterface: FC<ChatInterfaceProps> = ({
       </div>
 
       {/* Input area */}
-      <div className="border-t border-gray-200 bg-white px-6 py-4 flex-shrink-0">
+      <div className="px-6 py-4 flex-shrink-0">
         {/* Отображение общей ошибки */}
         {error && (
           <div className="mb-4 max-w-4xl mx-auto">
-            <div className="bg-red-50 border border-red-200 rounded-lg p-3">
+            <div className="bg-red-50 border border-red-200 rounded-lg p-3 shadow-sm">
               <div className="flex">
                 <div className="flex-shrink-0">
                   <svg className="h-5 w-5 text-red-400" viewBox="0 0 20 20" fill="currentColor">
@@ -201,27 +194,31 @@ export const ChatInterface: FC<ChatInterfaceProps> = ({
             </div>
           </div>
         )}
-        <div className="flex space-x-4 max-w-4xl mx-auto">
-          <input
-            type="text"
-            value={inputValue}
-            onChange={(e) => setInputValue(e.target.value)}
-            onKeyPress={(e) => e.key === "Enter" && handleSendMessage()}
-            placeholder={
-              !selectedDataset
-                ? "Сначала выберите датасет..."
-                : "Введите ваш вопрос..."
-            }
-            disabled={!selectedDataset || isLoading}
-            className="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent disabled:bg-gray-100 disabled:cursor-not-allowed"
-          />
-          <button
-            onClick={handleSendMessage}
-            disabled={!selectedDataset || !inputValue.trim() || isLoading}
-            className="px-6 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 focus:outline-none focus:ring-2 focus:ring-purple-500 disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors"
-          >
-            {isLoading ? "Отправка..." : "Отправить"}
-          </button>
+        <div className="relative max-w-4xl mx-auto">
+          <div className="bg-white rounded-full shadow-lg shadow-purple-300/50 border border-gray-200 flex items-center px-6 py-3">
+            <input
+              type="text"
+              value={inputValue}
+              onChange={(e) => setInputValue(e.target.value)}
+              onKeyPress={(e) => e.key === "Enter" && handleSendMessage()}
+              placeholder="Спросите что-нибудь..."
+              disabled={!selectedDataset || isLoading}
+              className="flex-1 bg-transparent outline-none text-gray-700 placeholder-gray-400 disabled:cursor-not-allowed"
+            />
+            <button
+              onClick={handleSendMessage}
+              disabled={!selectedDataset || !inputValue.trim() || isLoading}
+              className="ml-3 w-10 h-10 bg-purple-600 rounded-full flex items-center justify-center hover:bg-purple-700 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2 disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors"
+            >
+              {isLoading ? (
+                <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+              ) : (
+                <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" />
+                </svg>
+              )}
+            </button>
+          </div>
         </div>
       </div>
     </div>
