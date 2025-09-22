@@ -60,12 +60,22 @@ export const DatasetSidebar: FC<DatasetSidebarProps> = ({
         {/* Список датасетов */}
         {!isLoading && !error && (
           <div className="p-4 space-y-2">
-            {datasets.length === 0 ? (
+            {!datasets || datasets.length === 0 ? (
               <div className="text-center py-8">
                 <div className="text-gray-400 mb-2">
-                  <svg className="mx-auto h-12 w-12" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2M4 13h2m13-8v4a1 1 0 01-1 1H7a1 1 0 01-1-1V5a1 1 0 011-1h10a1 1 0 011 1z" />
-                  </svg>
+                    <svg
+                        className="w-24 h-24 text-gray-400 mx-auto mb-4"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                    >
+                        <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth={2}
+                            d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
+                        />
+                    </svg>
                 </div>
                 <h3 className="text-sm font-medium text-gray-900">Нет датасетов</h3>
                 <p className="text-sm text-gray-500 mt-1">
@@ -131,7 +141,7 @@ export const DatasetSidebar: FC<DatasetSidebarProps> = ({
             <span>
               Выбран:{" "}
               <span className="font-medium text-purple-600">
-                {datasets.find((d) => d.id === selectedDataset)?.title}
+                {datasets?.find((d) => d.id === selectedDataset)?.title}
               </span>
             </span>
           ) : (
