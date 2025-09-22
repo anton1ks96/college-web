@@ -77,14 +77,14 @@ export const ChatInterface: FC<ChatInterfaceProps> = ({
     : null;
 
   return (
-    <div className="flex-1 flex flex-col bg-gray-50 h-full">
-      {/* Messages area */}
-      <div className="flex-1 overflow-y-auto px-6 py-4 min-h-0 relative">
-        {/* Selected datasets indicator - positioned absolutely */}
+    <div className="flex-1 flex flex-col bg-gray-50 h-full relative">
+      {/* Messages area - full height with overlay header */}
+      <div className="flex-1 overflow-y-auto px-6 py-4 min-h-0">
+        {/* Fixed header with selected dataset - positioned absolutely inside messages area */}
         {selectedDataset && (
-          <div className="absolute top-4 left-6 z-10">
-            <div className="inline-flex items-center px-3 py-1.5 rounded-full bg-purple-100 border border-purple-200">
-              <span className="text-xs text-purple-700 font-medium">
+          <div className="absolute top-0 left-0 right-0 bg-gray-50 p-3.5 z-10 border-b border-gray-200">
+            <div className="inline-flex items-center px-3 py-1.5 rounded-full bg-purple-100 border border-purple-200 ml-6">
+              <span className="text-sm text-purple-700 font-medium">
                 Поиск в: {selectedDatasetName}
               </span>
             </div>
@@ -92,7 +92,7 @@ export const ChatInterface: FC<ChatInterfaceProps> = ({
         )}
         {messages.length === 0 ? (
           <div className="flex flex-col items-center justify-center h-full text-gray-500">
-            <p className="text-xm text-center max-w-md">
+            <p className="text-xm text-center max-w-md min-h-[3rem] flex items-center justify-center">
               {!selectedDataset
                 ? "Выберите датасет слева для начала работы"
                 : "Задайте вопрос, и я найду ответ в выбранном датасете"}

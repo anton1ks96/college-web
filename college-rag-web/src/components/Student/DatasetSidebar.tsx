@@ -131,19 +131,6 @@ export const DatasetSidebar: FC<DatasetSidebarProps> = ({
         )}
       </div>
 
-      {/* Footer with selected count */}
-      {selectedDataset && (
-        <div className="p-4 border-t border-gray-200 bg-gray-50">
-          <p className="text-sm text-gray-600">
-            <span>
-              Выбран:{" "}
-              <span className="font-medium text-purple-600">
-                {datasets?.find((d) => d.id === selectedDataset)?.title}
-              </span>
-            </span>
-          </p>
-        </div>
-      )}
     </aside>
   );
 };
