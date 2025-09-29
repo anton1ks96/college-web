@@ -99,7 +99,7 @@ export const ChatInterface: FC<ChatInterfaceProps> = ({
             </p>
           </div>
         ) : (
-          <div className="space-y-4 max-w-4xl mx-auto">
+          <div className="space-y-4 max-w-4xl mx-auto" style={{ paddingTop: selectedDataset ? '4rem' : '0' }}>
             {messages.map((message) => (
               <div
                 key={message.id}
