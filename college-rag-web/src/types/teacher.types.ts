@@ -51,11 +51,12 @@ export interface AddStudentsResponse {
 }
 
 export interface TopicStudentsResponse {
-  topic_id: string;
   students: Array<{
     id: string;
-    student_id: string;
-    student_name: string;
+    student: {
+      id: string;
+      username: string;
+    };
     assigned_at: string;
   }>;
 }

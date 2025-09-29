@@ -51,20 +51,6 @@ export const TeacherLayout: FC<TeacherLayoutProps> = ({ children }) => {
               {/* Navigation */}
               <nav className="flex space-x-4">
                 <button
-                  onClick={() => navigate("/teacher/dashboard")}
-                  className={`w-32 px-4 py-2 rounded-2xl font-medium transition-all duration-200 transform hover:shadow-lg hover:-translate-y-0.5 hover:opacity-100 focus:outline-none text-center ${
-                    isActive("/teacher/dashboard")
-                      ? "opacity-90"
-                      : "opacity-80"
-                  }`}
-                  style={{
-                    background: "#9333ea",
-                    color: "white"
-                  }}
-                >
-                  Панель
-                </button>
-                <button
                   onClick={() => navigate("/teacher/chat")}
                   className={`w-32 px-4 py-2 rounded-2xl font-medium transition-all duration-200 transform hover:shadow-lg hover:-translate-y-0.5 hover:opacity-100 focus:outline-none text-center ${
                     isActive("/teacher/chat")

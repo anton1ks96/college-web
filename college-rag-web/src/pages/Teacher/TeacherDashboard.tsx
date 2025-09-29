@@ -180,43 +180,6 @@ export const TeacherDashboard: FC = () => {
             </div>
           </div>
 
-          {/* Recent Topics */}
-          {topics && topics.length > 0 && (
-            <div className="bg-white rounded-xl shadow-md p-6 border border-gray-200 mt-6">
-              <div className="flex items-center justify-between mb-4">
-                <h2 className="text-lg font-semibold text-gray-900">
-                  Последние темы
-                </h2>
-                <button
-                  onClick={() => navigate('/teacher/topics')}
-                  className="text-sm text-purple-600 hover:text-purple-700 font-medium"
-                >
-                  Все темы →
-                </button>
-              </div>
-              <div className="space-y-3">
-                {topics.slice(0, 3).map((topic) => (
-                  <div
-                    key={topic.id}
-                    className="flex items-center justify-between py-3 border-b border-gray-100 last:border-0"
-                  >
-                    <div>
-                      <h3 className="font-medium text-gray-900">{topic.title}</h3>
-                      <p className="text-sm text-gray-500 mt-1">
-                        {topic.student_count || 0} студентов
-                      </p>
-                    </div>
-                    <button
-                      onClick={() => navigate('/teacher/topics')}
-                      className="text-sm text-gray-500 hover:text-gray-700"
-                    >
-                      Управлять
-                    </button>
-                  </div>
-                ))}
-              </div>
-            </div>
-          )}
         </div>
       </div>
     </TeacherLayout>

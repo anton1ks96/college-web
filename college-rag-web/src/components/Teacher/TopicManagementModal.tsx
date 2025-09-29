@@ -12,8 +12,10 @@ interface TopicManagementModalProps {
 
 interface TopicStudent {
   id: string;
-  student_id: string;
-  student_name: string;
+  student: {
+    id: string;
+    username: string;
+  };
   assigned_at: string;
 }
 
@@ -41,6 +43,7 @@ export const TopicManagementModal: FC<TopicManagementModalProps> = ({
     try {
       const response = await teacherService.getTopicStudents(topic.id);
       setStudents(response.students || []);
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
     } catch (err: any) {
       setError("Не удалось загрузить список студентов");
       setStudents([]);
@@ -172,15 +175,15 @@ export const TopicManagementModal: FC<TopicManagementModalProps> = ({
                   >
                     <div>
                       <p className="font-medium text-gray-900">
-                        {student.student_name || 'Имя не указано'}
+                        {student.student?.username || 'Имя не указано'}
                       </p>
                       <p className="text-xs text-gray-500">
                         Назначен: {student.assigned_at ? formatDate(student.assigned_at) : 'Дата не указана'}
                       </p>
                     </div>
-                    {student.student_id && (
+                    {student.student?.id && (
                       <div className="text-xs text-gray-400">
-                        ID: {student.student_id.length > 8 ? `${student.student_id.slice(0, 8)}...` : student.student_id}
+                        ID: {student.student.id.length > 8 ? `${student.student.id.slice(0, 8)}...` : student.student.id}
                       </div>
                     )}
                   </div>

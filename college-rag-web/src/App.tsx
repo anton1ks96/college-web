@@ -8,7 +8,6 @@ import LoginPage from "./pages/Login/LoginPage";
 import {ChatPage} from "./pages/Student/ChatPage";
 import {DatasetsPage} from "./pages/Student/DatasetsPage.tsx";
 import {TopicsPage} from "./pages/Student/Topics/TopicsPage";
-import {TeacherDashboard} from "./pages/Teacher/TeacherDashboard";
 import {TeacherTopicsPage} from "./pages/Teacher/TeacherTopicsPage";
 import {TeacherDatasetsPage} from "./pages/Teacher/TeacherDatasetsPage";
 
@@ -17,7 +16,7 @@ function RoleBasedRedirect() {
     const {user} = useAuthStore();
 
     if (user?.role === 'teacher') {
-        return <Navigate to="/teacher/dashboard" replace/>;
+        return <Navigate to="/teacher/topics" replace/>;
     }
     return <Navigate to="/dashboard" replace/>;
 }
@@ -93,16 +92,7 @@ function App() {
                     path="/teacher"
                     element={
                         <ProtectedRoute allowedRoles={["teacher"]}>
-                            <Navigate to="/teacher/dashboard" replace/>
-                        </ProtectedRoute>
-                    }
-                />
-
-                <Route
-                    path="/teacher/dashboard"
-                    element={
-                        <ProtectedRoute allowedRoles={["teacher"]}>
-                            <TeacherDashboard/>
+                            <Navigate to="/teacher/topics" replace/>
                         </ProtectedRoute>
                     }
                 />
