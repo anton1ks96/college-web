@@ -4,9 +4,16 @@ import type { TeacherTopic } from "../../types/teacher.types";
 interface TeacherTopicCardProps {
   topic: TeacherTopic;
   onClick: () => void;
+  onManage?: () => void;
+  onAddStudents?: () => void;
 }
 
-export const TeacherTopicCard: FC<TeacherTopicCardProps> = ({ topic, onClick }) => {
+export const TeacherTopicCard: FC<TeacherTopicCardProps> = ({
+  topic,
+  onClick,
+  onManage,
+  onAddStudents
+}) => {
   const formatDate = (dateString: string) => {
     return new Date(dateString).toLocaleDateString('ru-RU', {
       day: 'numeric',
@@ -47,7 +54,7 @@ export const TeacherTopicCard: FC<TeacherTopicCardProps> = ({ topic, onClick }) 
           <button
             onClick={(e) => {
               e.stopPropagation();
-              // Здесь можно добавить функционал для быстрых действий
+              if (onManage) onManage();
             }}
             className="flex-1 px-3 py-1.5 text-xs bg-purple-50 text-purple-700 rounded-lg hover:bg-purple-100 transition-colors"
           >
@@ -56,7 +63,7 @@ export const TeacherTopicCard: FC<TeacherTopicCardProps> = ({ topic, onClick }) 
           <button
             onClick={(e) => {
               e.stopPropagation();
-              // Здесь можно добавить функционал для добавления студентов
+              if (onAddStudents) onAddStudents();
             }}
             className="flex-1 px-3 py-1.5 text-xs bg-gray-50 text-gray-700 rounded-lg hover:bg-gray-100 transition-colors"
           >

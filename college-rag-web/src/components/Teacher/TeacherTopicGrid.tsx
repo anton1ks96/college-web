@@ -5,9 +5,16 @@ import { TeacherTopicCard } from "./TeacherTopicCard";
 interface TeacherTopicGridProps {
   topics: TeacherTopic[];
   onTopicClick: (topic: TeacherTopic) => void;
+  onManageTopic?: (topic: TeacherTopic) => void;
+  onAddStudents?: (topic: TeacherTopic) => void;
 }
 
-export const TeacherTopicGrid: FC<TeacherTopicGridProps> = ({ topics, onTopicClick }) => {
+export const TeacherTopicGrid: FC<TeacherTopicGridProps> = ({
+  topics,
+  onTopicClick,
+  onManageTopic,
+  onAddStudents
+}) => {
   if (!topics || topics.length === 0) {
     return (
       <div className="flex flex-col items-center justify-center py-20">
@@ -41,6 +48,8 @@ export const TeacherTopicGrid: FC<TeacherTopicGridProps> = ({ topics, onTopicCli
           key={topic.id}
           topic={topic}
           onClick={() => onTopicClick(topic)}
+          onManage={() => onManageTopic && onManageTopic(topic)}
+          onAddStudents={() => onAddStudents && onAddStudents(topic)}
         />
       ))}
     </div>

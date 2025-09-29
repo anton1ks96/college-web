@@ -3,6 +3,8 @@ import { useEffect, useState } from "react";
 import { TeacherLayout } from "../../components/Layout/TeacherLayout";
 import { TeacherTopicGrid } from "../../components/Teacher/TeacherTopicGrid";
 import { CreateTopicModal } from "../../components/Teacher/CreateTopicModal";
+import { TopicManagementModal } from "../../components/Teacher/TopicManagementModal";
+import { AddStudentsModal } from "../../components/Teacher/AddStudentsModal";
 import { useTeacherTopicStore } from "../../stores/useTeacherTopicStore";
 import type { TeacherTopic } from "../../types/teacher.types";
 
@@ -17,6 +19,8 @@ export const TeacherTopicsPage: FC = () => {
   } = useTeacherTopicStore();
 
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
+  const [isManagementModalOpen, setIsManagementModalOpen] = useState(false);
+  const [isAddStudentsModalOpen, setIsAddStudentsModalOpen] = useState(false);
   const [selectedTopic, setSelectedTopic] = useState<TeacherTopic | null>(null);
 
   useEffect(() => {
@@ -25,7 +29,22 @@ export const TeacherTopicsPage: FC = () => {
 
   const handleTopicClick = (topic: TeacherTopic) => {
     setSelectedTopic(topic);
-    // Здесь можно добавить логику для открытия модального окна с деталями темы
+    setIsManagementModalOpen(true);
+  };
+
+  const handleManageTopic = (topic: TeacherTopic) => {
+    setSelectedTopic(topic);
+    setIsManagementModalOpen(true);
+  };
+
+  const handleAddStudents = (topic: TeacherTopic) => {
+    setSelectedTopic(topic);
+    setIsAddStudentsModalOpen(true);
+  };
+
+  const handleAddStudentsFromManagement = () => {
+    setIsManagementModalOpen(false);
+    setIsAddStudentsModalOpen(true);
   };
 
   return (
@@ -111,7 +130,12 @@ export const TeacherTopicsPage: FC = () => {
                 <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-purple-600"></div>
               </div>
             ) : (
-              <TeacherTopicGrid topics={topics} onTopicClick={handleTopicClick} />
+              <TeacherTopicGrid
+                topics={topics}
+                onTopicClick={handleTopicClick}
+                onManageTopic={handleManageTopic}
+                onAddStudents={handleAddStudents}
+              />
             )}
           </div>
         </div>
@@ -120,6 +144,28 @@ export const TeacherTopicsPage: FC = () => {
       <CreateTopicModal
         isOpen={isCreateModalOpen}
         onClose={() => setIsCreateModalOpen(false)}
+      />
+
+      <TopicManagementModal
+        isOpen={isManagementModalOpen}
+        onClose={() => {
+          setIsManagementModalOpen(false);
+          setSelectedTopic(null);
+        }}
+        topic={selectedTopic}
+        onAddStudents={handleAddStudentsFromManagement}
+      />
+
+      <AddStudentsModal
+        isOpen={isAddStudentsModalOpen}
+        onClose={() => {
+          setIsAddStudentsModalOpen(false);
+          setSelectedTopic(null);
+        }}
+        topic={selectedTopic}
+        onSuccess={() => {
+          fetchTopics();
+        }}
       />
     </TeacherLayout>
   );
