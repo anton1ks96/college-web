@@ -65,6 +65,20 @@ export const StudentLayout: FC<StudentLayoutProps> = ({ children }) => {
                   Чат
                 </button>
                 <button
+                  onClick={() => navigate("/dashboard/topics")}
+                  className={`w-32 px-4 py-2 rounded-2xl font-medium transition-all duration-200 transform hover:shadow-lg hover:-translate-y-0.5 hover:opacity-100 focus:outline-none text-center ${
+                    isActive("/dashboard/topics")
+                      ? "opacity-90"
+                      : "opacity-80"
+                  }`}
+                  style={{
+                    background: "#9333ea",
+                    color: "white"
+                  }}
+                >
+                  Темы
+                </button>
+                <button
                   onClick={() => navigate("/dashboard/datasets")}
                   className={`w-32 px-4 py-2 rounded-2xl font-medium transition-all duration-200 transform hover:shadow-lg hover:-translate-y-0.5 hover:opacity-100 focus:outline-none text-center ${
                     isActive("/dashboard/datasets")

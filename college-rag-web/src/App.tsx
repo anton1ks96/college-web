@@ -6,6 +6,7 @@ import {StudentLayout} from "./components/Layout/StudentLayout";
 import LoginPage from "./pages/Login/LoginPage";
 import {ChatPage} from "./pages/Student/ChatPage";
 import {DatasetsPage} from "./pages/Student/DatasetsPage.tsx";
+import {TopicsPage} from "./pages/Student/Topics/TopicsPage";
 
 function App() {
     const {checkAuth, isLoading} = useAuthStore();
@@ -49,6 +50,15 @@ function App() {
                             <StudentLayout>
                                 <ChatPage/>
                             </StudentLayout>
+                        </ProtectedRoute>
+                    }
+                />
+
+                <Route
+                    path="/dashboard/topics"
+                    element={
+                        <ProtectedRoute allowedRoles={["student"]}>
+                            <TopicsPage/>
                         </ProtectedRoute>
                     }
                 />

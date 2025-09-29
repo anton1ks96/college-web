@@ -9,6 +9,7 @@ class DatasetService {
   async createDataset(
     title: string,
     content: string,
+    assignmentId?: string,
   ): Promise<CreateDatasetResponse> {
     const blob = new Blob([content], { type: "text/markdown" });
     const file = new File(
@@ -23,6 +24,9 @@ class DatasetService {
     const formData = new FormData();
     formData.append("title", title);
     formData.append("file", file);
+    if (assignmentId) {
+      formData.append("assignment_id", assignmentId);
+    }
 
     const response = await coreAPI.post<CreateDatasetResponse>(
       "/api/v1/datasets",

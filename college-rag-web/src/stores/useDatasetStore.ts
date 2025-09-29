@@ -48,7 +48,7 @@ export const useDatasetStore = create<DatasetState>((set, get) => ({
 
     set({ isLoading: true, error: null });
     try {
-      await datasetService.createDataset(data.title, data.content); // content теперь string
+      await datasetService.createDataset(data.title, data.content, data.assignmentId);
       await get().fetchDatasets();
       set({ isLoading: false });
     } catch (error: any) {

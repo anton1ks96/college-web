@@ -26,4 +26,5 @@ export interface CreateDatasetResponse {
 export interface CreateDatasetForm {
   title: string;
   content: string;
+  assignmentId?: string;
 }
