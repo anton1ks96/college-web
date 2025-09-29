@@ -12,6 +12,7 @@ interface TeacherTopicStore {
   error: string | null;
   totalTopics: number;
   currentPage: number;
+  totalPages: number;
 
   // Actions
   fetchTopics: (page?: number) => Promise<void>;
@@ -36,14 +37,17 @@ export const useTeacherTopicStore = create<TeacherTopicStore>((set, get) => ({
   error: null,
   totalTopics: 0,
   currentPage: 1,
+  totalPages: 1,
 
   fetchTopics: async (page = 1) => {
     set({ isLoading: true, error: null, currentPage: page });
     try {
-      const response = await teacherService.getMyTopics(page);
+      const response = await teacherService.getMyTopics(page, 20);
+      const totalPages = Math.ceil((response.total || 0) / 20);
       set({
         topics: response.topics || [],
         totalTopics: response.total || 0,
+        totalPages: totalPages,
         isLoading: false
       });
     } catch (error: any) {
