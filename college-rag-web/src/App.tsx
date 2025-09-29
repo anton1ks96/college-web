@@ -3,10 +3,24 @@ import {BrowserRouter, Routes, Route, Navigate} from "react-router-dom";
 import {useAuthStore} from "./stores/useAuthStore";
 import {ProtectedRoute} from "./components/ProtectedRoute";
 import {StudentLayout} from "./components/Layout/StudentLayout";
+import {TeacherLayout} from "./components/Layout/TeacherLayout";
 import LoginPage from "./pages/Login/LoginPage";
 import {ChatPage} from "./pages/Student/ChatPage";
 import {DatasetsPage} from "./pages/Student/DatasetsPage.tsx";
 import {TopicsPage} from "./pages/Student/Topics/TopicsPage";
+import {TeacherDashboard} from "./pages/Teacher/TeacherDashboard";
+import {TeacherTopicsPage} from "./pages/Teacher/TeacherTopicsPage";
+import {TeacherDatasetsPage} from "./pages/Teacher/TeacherDatasetsPage";
+
+// Component to redirect based on user role
+function RoleBasedRedirect() {
+    const {user} = useAuthStore();
+
+    if (user?.role === 'teacher') {
+        return <Navigate to="/teacher/dashboard" replace/>;
+    }
+    return <Navigate to="/dashboard" replace/>;
+}
 
 function App() {
     const {checkAuth, isLoading} = useAuthStore();
@@ -74,7 +88,60 @@ function App() {
                     }
                 />
 
-                <Route path="/" element={<Navigate to="/dashboard" replace/>}/>
+                {/* Teacher routes */}
+                <Route
+                    path="/teacher"
+                    element={
+                        <ProtectedRoute allowedRoles={["teacher"]}>
+                            <Navigate to="/teacher/dashboard" replace/>
+                        </ProtectedRoute>
+                    }
+                />
+
+                <Route
+                    path="/teacher/dashboard"
+                    element={
+                        <ProtectedRoute allowedRoles={["teacher"]}>
+                            <TeacherDashboard/>
+                        </ProtectedRoute>
+                    }
+                />
+
+                <Route
+                    path="/teacher/chat"
+                    element={
+                        <ProtectedRoute allowedRoles={["teacher"]}>
+                            <TeacherLayout>
+                                <ChatPage/>
+                            </TeacherLayout>
+                        </ProtectedRoute>
+                    }
+                />
+
+                <Route
+                    path="/teacher/topics"
+                    element={
+                        <ProtectedRoute allowedRoles={["teacher"]}>
+                            <TeacherTopicsPage/>
+                        </ProtectedRoute>
+                    }
+                />
+
+                <Route
+                    path="/teacher/datasets"
+                    element={
+                        <ProtectedRoute allowedRoles={["teacher"]}>
+                            <TeacherDatasetsPage/>
+                        </ProtectedRoute>
+                    }
+                />
+
+                {/* Root redirect based on role */}
+                <Route path="/" element={
+                    <ProtectedRoute allowedRoles={["student", "teacher"]}>
+                        <RoleBasedRedirect/>
+                    </ProtectedRoute>
+                }/>
             </Routes>
         </BrowserRouter>
     );

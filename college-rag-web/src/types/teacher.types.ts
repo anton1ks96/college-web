@@ -1,0 +1,61 @@
+export interface StudentInfo {
+  id: string;
+  username: string;
+}
+
+export interface StudentSearchResponse {
+  students: StudentInfo[];
+  total: number;
+}
+
+export interface CreateTopicRequest {
+  title: string;
+  description: string;
+  students: StudentInfo[];
+}
+
+export interface CreateTopicResponse {
+  id: string;
+  title: string;
+  description: string;
+  created_at: string;
+  message: string;
+}
+
+export interface TeacherTopic {
+  id: string;
+  title: string;
+  description: string;
+  created_by: string;
+  created_by_id: string;
+  created_at: string;
+  updated_at: string;
+  student_count?: number;
+  students?: StudentInfo[];
+}
+
+export interface TeacherTopicsResponse {
+  topics: TeacherTopic[];
+  total: number;
+  page: number;
+  limit: number;
+}
+
+export interface AddStudentsRequest {
+  students: StudentInfo[];
+}
+
+export interface AddStudentsResponse {
+  message: string;
+  added_count: number;
+}
+
+export interface TopicStudentsResponse {
+  topic_id: string;
+  students: Array<{
+    id: string;
+    student_id: string;
+    student_name: string;
+    assigned_at: string;
+  }>;
+}
