@@ -5,17 +5,26 @@ import { useDatasetStore } from "../../stores/useDatasetStore";
 import type { Dataset } from "../../types/dataset.types";
 
 export const TeacherDatasetsPage: FC = () => {
-  const { datasets, totalDatasets, isLoading, error, fetchDatasets } = useDatasetStore();
+  const { datasets, totalDatasets, isLoading, error, fetchDatasets, getDatasetById } = useDatasetStore();
   const [selectedDataset, setSelectedDataset] = useState<Dataset | null>(null);
   const [currentPage, setCurrentPage] = useState(1);
+  const [isLoadingDataset, setIsLoadingDataset] = useState(false);
   const datasetsPerPage = 12;
 
   useEffect(() => {
     fetchDatasets(currentPage, datasetsPerPage);
   }, [currentPage]);
 
-  const handleViewDataset = (dataset: Dataset) => {
-    setSelectedDataset(dataset);
+  const handleViewDataset = async (dataset: Dataset) => {
+    setIsLoadingDataset(true);
+    try {
+      const fullDataset = await getDatasetById(dataset.id);
+      setSelectedDataset(fullDataset);
+    } catch (error) {
+      console.error("Ошибка загрузки датасета:", error);
+    } finally {
+      setIsLoadingDataset(false);
+    }
   };
 
   const handleCloseModal = () => {
@@ -235,74 +244,82 @@ export const TeacherDatasetsPage: FC = () => {
       </div>
 
       {/* View Dataset Modal */}
-      {selectedDataset && (
+      {(selectedDataset || isLoadingDataset) && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
           <div className="bg-white rounded-xl shadow-xl max-w-4xl w-full max-h-[90vh] flex flex-col">
-            <div className="px-6 py-4 border-b border-gray-200 flex-shrink-0">
-              <div className="flex items-center justify-between">
-                <div>
-                  <h2 className="text-xl font-semibold text-gray-900">
-                    {selectedDataset.title}
-                  </h2>
-                  <p className="text-sm text-gray-500 mt-1">
-                    Студент: {selectedDataset.author || 'Неизвестно'}
-                  </p>
-                </div>
-                <button
-                  onClick={handleCloseModal}
-                  className="text-gray-400 hover:text-gray-600 transition-colors"
-                >
-                  <svg
-                    className="w-6 h-6"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M6 18L18 6M6 6l12 12"
-                    />
-                  </svg>
-                </button>
+            {isLoadingDataset ? (
+              <div className="flex items-center justify-center py-20">
+                <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-purple-600"></div>
               </div>
-            </div>
-            <div className="flex-1 overflow-auto p-6">
-              <div className="prose prose-gray max-w-none">
-                <div className="bg-gray-50 rounded-lg p-4 mb-4">
-                  <div className="grid grid-cols-2 gap-4 text-sm">
+            ) : selectedDataset && (
+              <>
+                <div className="px-6 py-4 border-b border-gray-200 flex-shrink-0">
+                  <div className="flex items-center justify-between">
                     <div>
-                      <span className="font-medium text-gray-600">Создан:</span>
-                      <p className="text-gray-900">{formatDate(selectedDataset.created_at)}</p>
-                    </div>
-                    <div>
-                      <span className="font-medium text-gray-600">Обновлен:</span>
-                      <p className="text-gray-900">{formatDate(selectedDataset.updated_at)}</p>
-                    </div>
-                    <div>
-                      <span className="font-medium text-gray-600">Статус:</span>
-                      <p className="text-gray-900">
-                        {selectedDataset.indexed_at ? (
-                          <span className="text-green-600">Проиндексирован</span>
-                        ) : (
-                          <span className="text-yellow-600">Ожидает индексации</span>
-                        )}
+                      <h2 className="text-xl font-semibold text-gray-900">
+                        {selectedDataset.title}
+                      </h2>
+                      <p className="text-sm text-gray-500 mt-1">
+                        Студент: {selectedDataset.author || 'Неизвестно'}
                       </p>
                     </div>
-                    <div>
-                      <span className="font-medium text-gray-600">ID:</span>
-                      <p className="text-gray-900 font-mono text-xs">{selectedDataset.id}</p>
-                    </div>
+                    <button
+                      onClick={handleCloseModal}
+                      className="text-gray-400 hover:text-gray-600 transition-colors"
+                    >
+                      <svg
+                        className="w-6 h-6"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M6 18L18 6M6 6l12 12"
+                        />
+                      </svg>
+                    </button>
                   </div>
                 </div>
-                {selectedDataset.content ? (
-                  <div className="whitespace-pre-wrap">{selectedDataset.content}</div>
-                ) : (
-                  <p className="text-gray-500 italic">Содержимое датасета недоступно</p>
-                )}
-              </div>
-            </div>
+                <div className="flex-1 overflow-auto p-6">
+                  <div className="prose prose-gray max-w-none">
+                    <div className="bg-gray-50 rounded-lg p-4 mb-4">
+                      <div className="grid grid-cols-2 gap-4 text-sm">
+                        <div>
+                          <span className="font-medium text-gray-600">Создан:</span>
+                          <p className="text-gray-900">{formatDate(selectedDataset.created_at)}</p>
+                        </div>
+                        <div>
+                          <span className="font-medium text-gray-600">Обновлен:</span>
+                          <p className="text-gray-900">{formatDate(selectedDataset.updated_at)}</p>
+                        </div>
+                        <div>
+                          <span className="font-medium text-gray-600">Статус:</span>
+                          <p className="text-gray-900">
+                            {selectedDataset.indexed_at ? (
+                              <span className="text-green-600">Проиндексирован</span>
+                            ) : (
+                              <span className="text-yellow-600">Ожидает индексации</span>
+                            )}
+                          </p>
+                        </div>
+                        <div>
+                          <span className="font-medium text-gray-600">ID:</span>
+                          <p className="text-gray-900 font-mono text-xs">{selectedDataset.id}</p>
+                        </div>
+                      </div>
+                    </div>
+                    {selectedDataset.content ? (
+                      <div className="whitespace-pre-wrap">{selectedDataset.content}</div>
+                    ) : (
+                      <p className="text-gray-500 italic">Содержимое датасета недоступно</p>
+                    )}
+                  </div>
+                </div>
+              </>
+            )}
           </div>
         </div>
       )}
