@@ -6,7 +6,7 @@ import type { LoginFormData } from "../../types";
 
 const LoginPage: React.FC = () => {
     const navigate = useNavigate();
-    const { login, isLoading, error, clearError, isAuthenticated } =
+    const { login, isLoading, error, clearError, isAuthenticated, user } =
         useAuthStore();
 
     const {
@@ -16,10 +16,14 @@ const LoginPage: React.FC = () => {
     } = useForm<LoginFormData>();
 
     useEffect(() => {
-        if (isAuthenticated) {
-            navigate("/dashboard");
+        if (isAuthenticated && user) {
+            if (user.role === 'teacher') {
+                navigate("/teacher/topics");
+            } else {
+                navigate("/dashboard");
+            }
         }
-    }, [isAuthenticated, navigate]);
+    }, [isAuthenticated, user, navigate]);
 
     useEffect(() => {
         return () => clearError();
@@ -28,7 +32,7 @@ const LoginPage: React.FC = () => {
     const onSubmit = async (data: LoginFormData) => {
         try {
             await login(data);
-            navigate("/dashboard");
+            // Редирект выполнится через useEffect выше
             // eslint-disable-next-line @typescript-eslint/no-unused-vars
         } catch (error) {
             // Ошибка уже обработана в store
