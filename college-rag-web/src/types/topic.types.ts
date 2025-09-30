@@ -21,6 +21,7 @@ export interface TopicWithAssignment {
   topic: Topic;
   assignment_id: string;
   assigned_at: string;
+  has_dataset: boolean;
 }
 
 export interface GetAssignedTopicsResponse {

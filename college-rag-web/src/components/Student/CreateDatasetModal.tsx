@@ -35,6 +35,9 @@ export const CreateDatasetModal: FC<CreateDatasetModalProps> = ({
     }
   }, [location.state, topics]);
 
+  // Filter topics that don't have datasets yet (using backend flag)
+  const availableTopics = topics.filter(topic => !topic.has_dataset);
+
   if (!isOpen) return null;
 
   const handleSubmit = async () => {
@@ -127,14 +130,18 @@ export const CreateDatasetModal: FC<CreateDatasetModalProps> = ({
               id="topic"
               value={selectedTopic?.assignment_id || ""}
               onChange={(e) => {
-                const topic = topics.find(t => t.assignment_id === e.target.value);
+                const topic = availableTopics.find(t => t.assignment_id === e.target.value);
                 setSelectedTopic(topic || null);
               }}
               className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent"
-              disabled={isLoading}
+              disabled={isLoading || availableTopics.length === 0}
             >
-              <option value="">Выберите тему</option>
-              {topics.map((topic) => (
+              <option value="">
+                {availableTopics.length === 0
+                  ? "Нет доступных тем"
+                  : "Выберите тему"}
+              </option>
+              {availableTopics.map((topic) => (
                 <option key={topic.assignment_id} value={topic.assignment_id}>
                   {topic.topic.title}
                 </option>
@@ -143,6 +150,16 @@ export const CreateDatasetModal: FC<CreateDatasetModalProps> = ({
             {selectedTopic && (
               <p className="mt-1 text-xs text-gray-500">
                 Преподаватель: {selectedTopic.topic.created_by}
+              </p>
+            )}
+            {topics.length > 0 && availableTopics.length === 0 && (
+              <p className="mt-2 text-sm text-amber-600 bg-amber-50 border border-amber-200 rounded-lg p-2">
+                У всех назначенных вам тем уже есть датасеты. Можно создать только один датасет на тему.
+              </p>
+            )}
+            {topics.length > availableTopics.length && availableTopics.length > 0 && (
+              <p className="mt-2 text-xs text-gray-500">
+                Показаны только темы без датасетов ({availableTopics.length} из {topics.length})
               </p>
             )}
           </div>
@@ -212,7 +229,7 @@ export const CreateDatasetModal: FC<CreateDatasetModalProps> = ({
             </button>
             <button
               onClick={handleSubmit}
-              disabled={isLoading || !selectedTopic || !content.trim()}
+              disabled={isLoading || !selectedTopic || !content.trim() || availableTopics.length === 0}
               className="px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors"
             >
               {isLoading ? (

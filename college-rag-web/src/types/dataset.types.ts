@@ -4,6 +4,7 @@ export interface Dataset {
   content?: string;
   author?: string;
   user_id: string;
+  assignment_id?: string;
   created_at: string;
   updated_at: string;
   indexed_at?: string | null;
