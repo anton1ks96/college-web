@@ -4,17 +4,27 @@ import {useAuthStore} from "./stores/useAuthStore";
 import {ProtectedRoute} from "./components/ProtectedRoute";
 import {StudentLayout} from "./components/Layout/StudentLayout";
 import {TeacherLayout} from "./components/Layout/TeacherLayout";
+import {AdminLayout} from "./components/Layout/AdminLayout";
 import LoginPage from "./pages/Login/LoginPage";
 import {ChatPage} from "./pages/Student/ChatPage";
 import {DatasetsPage} from "./pages/Student/DatasetsPage.tsx";
 import {TopicsPage} from "./pages/Student/Topics/TopicsPage";
 import {TeacherTopicsPage} from "./pages/Teacher/TeacherTopicsPage";
 import {TeacherDatasetsPage} from "./pages/Teacher/TeacherDatasetsPage";
+import {AdminDashboard} from "./pages/Admin/AdminDashboard";
+import {AdminTopicsPage} from "./pages/Admin/AdminTopicsPage";
+import {AdminDatasetsPage} from "./pages/Admin/AdminDatasetsPage";
+import {AdminUsersPage} from "./pages/Admin/AdminUsersPage";
+import {AdminTopicsTablePage} from "./pages/Admin/AdminTopicsTablePage";
+import {AdminDatasetsTablePage} from "./pages/Admin/AdminDatasetsTablePage";
 
 // Component to redirect based on user role
 function RoleBasedRedirect() {
     const {user} = useAuthStore();
 
+    if (user?.role === 'admin') {
+        return <Navigate to="/admin" replace/>;
+    }
     if (user?.role === 'teacher') {
         return <Navigate to="/teacher/topics" replace/>;
     }
@@ -126,9 +136,74 @@ function App() {
                     }
                 />
 
+                <Route
+                    path="/admin"
+                    element={
+                        <ProtectedRoute allowedRoles={["admin"]}>
+                            <AdminDashboard/>
+                        </ProtectedRoute>
+                    }
+                />
+
+                <Route
+                    path="/admin/chat"
+                    element={
+                        <ProtectedRoute allowedRoles={["admin"]}>
+                            <AdminLayout>
+                                <ChatPage/>
+                            </AdminLayout>
+                        </ProtectedRoute>
+                    }
+                />
+
+                <Route
+                    path="/admin/topics"
+                    element={
+                        <ProtectedRoute allowedRoles={["admin"]}>
+                            <AdminTopicsPage/>
+                        </ProtectedRoute>
+                    }
+                />
+
+                <Route
+                    path="/admin/datasets"
+                    element={
+                        <ProtectedRoute allowedRoles={["admin"]}>
+                            <AdminDatasetsPage/>
+                        </ProtectedRoute>
+                    }
+                />
+
+                <Route
+                    path="/admin/users"
+                    element={
+                        <ProtectedRoute allowedRoles={["admin"]}>
+                            <AdminUsersPage/>
+                        </ProtectedRoute>
+                    }
+                />
+
+                <Route
+                    path="/admin/topics-table"
+                    element={
+                        <ProtectedRoute allowedRoles={["admin"]}>
+                            <AdminTopicsTablePage/>
+                        </ProtectedRoute>
+                    }
+                />
+
+                <Route
+                    path="/admin/datasets-table"
+                    element={
+                        <ProtectedRoute allowedRoles={["admin"]}>
+                            <AdminDatasetsTablePage/>
+                        </ProtectedRoute>
+                    }
+                />
+
                 {/* Root redirect based on role */}
                 <Route path="/" element={
-                    <ProtectedRoute allowedRoles={["student", "teacher"]}>
+                    <ProtectedRoute allowedRoles={["student", "teacher", "admin"]}>
                         <RoleBasedRedirect/>
                     </ProtectedRoute>
                 }/>

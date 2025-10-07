@@ -39,6 +39,7 @@ export interface TeacherTopicsResponse {
   total: number;
   page: number;
   limit: number;
+  pages: number;
 }
 
 export interface AddStudentsRequest {
