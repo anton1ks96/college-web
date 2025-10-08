@@ -47,20 +47,6 @@ export const AdminLayout: FC<AdminLayoutProps> = ({ children }) => {
 
               <nav className="flex space-x-3 flex-wrap gap-y-2">
                 <button
-                  onClick={() => navigate("/admin")}
-                  className={`px-3 py-2 rounded-2xl font-medium transition-all duration-200 transform hover:shadow-lg hover:-translate-y-0.5 hover:opacity-100 focus:outline-none text-center text-sm ${
-                    location.pathname === "/admin"
-                      ? "opacity-90"
-                      : "opacity-80"
-                  }`}
-                  style={{
-                    background: "#dc2626",
-                    color: "white"
-                  }}
-                >
-                  Главная
-                </button>
-                <button
                   onClick={() => navigate("/admin/chat")}
                   className={`px-3 py-2 rounded-2xl font-medium transition-all duration-200 transform hover:shadow-lg hover:-translate-y-0.5 hover:opacity-100 focus:outline-none text-center text-sm ${
                     isActive("/admin/chat")
@@ -89,20 +75,6 @@ export const AdminLayout: FC<AdminLayoutProps> = ({ children }) => {
                   Темы
                 </button>
                 <button
-                  onClick={() => navigate("/admin/topics-table")}
-                  className={`px-3 py-2 rounded-2xl font-medium transition-all duration-200 transform hover:shadow-lg hover:-translate-y-0.5 hover:opacity-100 focus:outline-none text-center text-sm ${
-                    isActive("/admin/topics-table")
-                      ? "opacity-90"
-                      : "opacity-80"
-                  }`}
-                  style={{
-                    background: "#dc2626",
-                    color: "white"
-                  }}
-                >
-                  Таблица тем
-                </button>
-                <button
                   onClick={() => navigate("/admin/datasets")}
                   className={`px-3 py-2 rounded-2xl font-medium transition-all duration-200 transform hover:shadow-lg hover:-translate-y-0.5 hover:opacity-100 focus:outline-none text-center text-sm ${
                     isActive("/admin/datasets")
@@ -129,20 +101,6 @@ export const AdminLayout: FC<AdminLayoutProps> = ({ children }) => {
                   }}
                 >
                   Таблица датасетов
-                </button>
-                <button
-                  onClick={() => navigate("/admin/users")}
-                  className={`px-3 py-2 rounded-2xl font-medium transition-all duration-200 transform hover:shadow-lg hover:-translate-y-0.5 hover:opacity-100 focus:outline-none text-center text-sm ${
-                    isActive("/admin/users")
-                      ? "opacity-90"
-                      : "opacity-80"
-                  }`}
-                  style={{
-                    background: "#dc2626",
-                    color: "white"
-                  }}
-                >
-                  Пользователи
                 </button>
               </nav>
             </div>
