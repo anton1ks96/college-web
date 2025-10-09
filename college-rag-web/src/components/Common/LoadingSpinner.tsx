@@ -1,5 +1,5 @@
-import type { FC } from "react";
-import type { ColorScheme } from "./Pagination";
+import type {FC} from "react";
+import type {ColorScheme} from "./Pagination";
 
 interface LoadingSpinnerProps {
   colorScheme?: ColorScheme;

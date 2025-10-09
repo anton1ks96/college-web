@@ -1,6 +1,6 @@
-import { coreAPI } from '../api/client';
-import type { TeacherTopicsResponse } from '../types/teacher.types';
-import type { DatasetListResponse } from '../types/dataset.types';
+import {coreAPI} from '../api/client';
+import type {TeacherTopicsResponse} from '../types/teacher.types';
+import type {DatasetListResponse} from '../types/dataset.types';
 
 export interface AdminStats {
   usersCount: number;

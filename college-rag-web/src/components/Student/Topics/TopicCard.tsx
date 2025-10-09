@@ -1,5 +1,5 @@
-import type { FC } from "react";
-import type { TopicWithAssignment } from "../../../types/topic.types";
+import type {FC} from "react";
+import type {TopicWithAssignment} from "../../../types/topic.types";
 
 interface TopicCardProps {
   assignment: TopicWithAssignment;

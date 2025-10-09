@@ -1,6 +1,6 @@
-import type { FC } from "react";
-import type { TopicWithAssignment } from "../../../types/topic.types";
-import { useNavigate } from "react-router-dom";
+import type {FC} from "react";
+import type {TopicWithAssignment} from "../../../types/topic.types";
+import {useNavigate} from "react-router-dom";
 
 interface TopicDetailModalProps {
   isOpen: boolean;

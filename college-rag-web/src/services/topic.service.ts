@@ -1,4 +1,4 @@
-import { coreAPI } from '../api/client';
+import {coreAPI} from '../api/client';
 import type {GetAssignedTopicsResponse, TopicDetailResponse} from '../types/topic.types';
 
 class TopicService {

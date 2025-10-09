@@ -1,7 +1,7 @@
-import { create } from 'zustand';
-import { adminService, type AdminStats } from '../services/admin.service';
-import type { TeacherTopic } from '../types/teacher.types';
-import type { Dataset } from '../types/dataset.types';
+import {create} from 'zustand';
+import {adminService, type AdminStats} from '../services/admin.service';
+import type {TeacherTopic} from '../types/teacher.types';
+import type {Dataset} from '../types/dataset.types';
 
 interface AdminState {
   // Stats
@@ -101,7 +101,7 @@ export const useAdminStore = create<AdminState>((set, get) => ({
         datasets: response.datasets,
         totalDatasets: response.total,
         currentDatasetsPage: response.page,
-        totalDatasetsPages: response.pages,
+        totalDatasetsPages: Math.ceil(response.total / response.limit),
         isLoadingDatasets: false,
       });
     } catch (error: any) {

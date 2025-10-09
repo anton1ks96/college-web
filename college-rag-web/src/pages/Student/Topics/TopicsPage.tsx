@@ -1,10 +1,10 @@
-import type { FC } from "react";
-import { useEffect, useState } from "react";
-import { StudentLayout } from "../../../components/Layout/StudentLayout";
-import { TopicGrid } from "../../../components/Student/Topics/TopicGrid";
-import { TopicDetailModal } from "../../../components/Student/Topics/TopicDetailModal";
-import { useTopicStore } from "../../../stores/useTopicStore";
-import type { TopicWithAssignment } from "../../../types/topic.types";
+import type {FC} from "react";
+import {useEffect, useState} from "react";
+import {StudentLayout} from "../../../components/Layout/StudentLayout";
+import {TopicGrid} from "../../../components/Student/Topics/TopicGrid";
+import {TopicDetailModal} from "../../../components/Student/Topics/TopicDetailModal";
+import {useTopicStore} from "../../../stores/useTopicStore";
+import type {TopicWithAssignment} from "../../../types/topic.types";
 
 export const TopicsPage: FC = () => {
   const { topics, isLoading, error, fetchAssignedTopics, clearError } = useTopicStore();

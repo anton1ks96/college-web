@@ -1,7 +1,7 @@
-import type { FC, ReactNode } from "react";
-import { useState, useEffect, useRef } from "react";
-import { useNavigate, useLocation } from "react-router-dom";
-import { useAuthStore } from "../../stores/useAuthStore";
+import type {FC, ReactNode} from "react";
+import {useEffect, useRef, useState} from "react";
+import {useLocation, useNavigate} from "react-router-dom";
+import {useAuthStore} from "../../stores/useAuthStore";
 
 interface AdminLayoutProps {
   children: ReactNode;
@@ -48,13 +48,13 @@ export const AdminLayout: FC<AdminLayoutProps> = ({ children }) => {
               <nav className="flex space-x-3 flex-wrap gap-y-2">
                 <button
                   onClick={() => navigate("/admin/chat")}
-                  className={`px-3 py-2 rounded-2xl font-medium transition-all duration-200 transform hover:shadow-lg hover:-translate-y-0.5 hover:opacity-100 focus:outline-none text-center text-sm ${
+                  className={`w-32 px-4 py-2 rounded-2xl font-medium transition-all duration-200 transform hover:shadow-lg hover:-translate-y-0.5 hover:opacity-100 focus:outline-none text-center ${
                     isActive("/admin/chat")
                       ? "opacity-90"
                       : "opacity-80"
                   }`}
                   style={{
-                    background: "#dc2626",
+                    background: "#9333ea",
                     color: "white"
                   }}
                 >
@@ -62,13 +62,13 @@ export const AdminLayout: FC<AdminLayoutProps> = ({ children }) => {
                 </button>
                 <button
                   onClick={() => navigate("/admin/topics")}
-                  className={`px-3 py-2 rounded-2xl font-medium transition-all duration-200 transform hover:shadow-lg hover:-translate-y-0.5 hover:opacity-100 focus:outline-none text-center text-sm ${
+                  className={`w-32 px-4 py-2 rounded-2xl font-medium transition-all duration-200 transform hover:shadow-lg hover:-translate-y-0.5 hover:opacity-100 focus:outline-none text-center ${
                     isActive("/admin/topics")
                       ? "opacity-90"
                       : "opacity-80"
                   }`}
                   style={{
-                    background: "#dc2626",
+                    background: "#9333ea",
                     color: "white"
                   }}
                 >
@@ -76,31 +76,17 @@ export const AdminLayout: FC<AdminLayoutProps> = ({ children }) => {
                 </button>
                 <button
                   onClick={() => navigate("/admin/datasets")}
-                  className={`px-3 py-2 rounded-2xl font-medium transition-all duration-200 transform hover:shadow-lg hover:-translate-y-0.5 hover:opacity-100 focus:outline-none text-center text-sm ${
+                  className={`w-32 px-4 py-2 rounded-2xl font-medium transition-all duration-200 transform hover:shadow-lg hover:-translate-y-0.5 hover:opacity-100 focus:outline-none text-center ${
                     isActive("/admin/datasets")
                       ? "opacity-90"
                       : "opacity-80"
                   }`}
                   style={{
-                    background: "#dc2626",
+                    background: "#9333ea",
                     color: "white"
                   }}
                 >
                   Датасеты
-                </button>
-                <button
-                  onClick={() => navigate("/admin/datasets-table")}
-                  className={`px-3 py-2 rounded-2xl font-medium transition-all duration-200 transform hover:shadow-lg hover:-translate-y-0.5 hover:opacity-100 focus:outline-none text-center text-sm ${
-                    isActive("/admin/datasets-table")
-                      ? "opacity-90"
-                      : "opacity-80"
-                  }`}
-                  style={{
-                    background: "#dc2626",
-                    color: "white"
-                  }}
-                >
-                  Таблица датасетов
                 </button>
               </nav>
             </div>
@@ -110,9 +96,9 @@ export const AdminLayout: FC<AdminLayoutProps> = ({ children }) => {
                 <div className="relative" ref={dropdownRef}>
                   <button
                     onClick={() => setIsDropdownOpen(!isDropdownOpen)}
-                    className="flex items-center space-x-3 bg-gray-50 hover:bg-gray-100 rounded-lg px-3 py-2 my-1 border transition-colors focus:outline-none focus:ring-2 focus:ring-red-500"
+                    className="flex items-center space-x-3 bg-gray-50 hover:bg-gray-100 rounded-lg px-3 py-2 my-1 border transition-colors focus:outline-none focus:ring-2 focus:ring-purple-500"
                   >
-                    <div className="w-10 h-10 bg-red-600 rounded-full flex items-center justify-center">
+                    <div className="w-10 h-10 bg-purple-600 rounded-full flex items-center justify-center">
                       <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
                       </svg>
@@ -141,7 +127,7 @@ export const AdminLayout: FC<AdminLayoutProps> = ({ children }) => {
                     <div className="absolute right-0 mt-3 w-52 bg-white rounded-lg shadow-lg border border-gray-200 py-2 z-50">
                       <button
                         onClick={handleLogout}
-                        className="flex items-center space-x-3 mx-2 px-4 py-3 text-sm text-gray-700 hover:bg-red-50 hover:text-red-700 rounded-md transition-colors"
+                        className="flex items-center space-x-3 mx-2 px-4 py-3 text-sm text-gray-700 hover:bg-purple-50 hover:text-purple-700 rounded-md transition-colors"
                       >
                         <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />

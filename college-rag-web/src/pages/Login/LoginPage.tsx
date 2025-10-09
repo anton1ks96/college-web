@@ -1,8 +1,8 @@
-import React, { useEffect } from "react";
-import { useForm } from "react-hook-form";
-import { useNavigate } from "react-router-dom";
-import { useAuthStore } from "../../stores/useAuthStore";
-import type { LoginFormData } from "../../types";
+import React, {useEffect} from "react";
+import {useForm} from "react-hook-form";
+import {useNavigate} from "react-router-dom";
+import {useAuthStore} from "../../stores/useAuthStore";
+import type {LoginFormData} from "../../types";
 
 const LoginPage: React.FC = () => {
     const navigate = useNavigate();
@@ -18,7 +18,7 @@ const LoginPage: React.FC = () => {
     useEffect(() => {
         if (isAuthenticated && user) {
             if (user.role === 'admin') {
-                navigate("/admin");
+                navigate("/admin/chat");
             } else if (user.role === 'teacher') {
                 navigate("/teacher/topics");
             } else {

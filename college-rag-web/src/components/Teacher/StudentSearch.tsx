@@ -1,7 +1,7 @@
-import type { FC } from "react";
-import { useState, useEffect } from "react";
-import { useTeacherTopicStore } from "../../stores/useTeacherTopicStore";
-import type { StudentInfo } from "../../types/teacher.types";
+import type {FC} from "react";
+import {useEffect, useState} from "react";
+import {useTeacherTopicStore} from "../../stores/useTeacherTopicStore";
+import type {StudentInfo} from "../../types/teacher.types";
 
 interface StudentSearchProps {
   onStudentSelect?: (student: StudentInfo) => void;

@@ -1,7 +1,7 @@
-import type { FC, ReactNode } from "react";
-import { useState, useEffect, useRef } from "react";
-import { useNavigate, useLocation } from "react-router-dom";
-import { useAuthStore } from "../../stores/useAuthStore";
+import type {FC, ReactNode} from "react";
+import {useEffect, useRef, useState} from "react";
+import {useLocation, useNavigate} from "react-router-dom";
+import {useAuthStore} from "../../stores/useAuthStore";
 
 interface TeacherLayoutProps {
   children: ReactNode;

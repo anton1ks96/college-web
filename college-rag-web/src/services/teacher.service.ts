@@ -1,13 +1,13 @@
-import { coreAPI } from '../api/client';
+import {coreAPI} from '../api/client';
 import type {
-  StudentSearchResponse,
-  CreateTopicRequest,
-  CreateTopicResponse,
-  TeacherTopicsResponse,
-  AddStudentsRequest,
-  AddStudentsResponse,
-  TopicStudentsResponse,
-  TeacherTopic
+    AddStudentsRequest,
+    AddStudentsResponse,
+    CreateTopicRequest,
+    CreateTopicResponse,
+    StudentSearchResponse,
+    TeacherTopic,
+    TeacherTopicsResponse,
+    TopicStudentsResponse
 } from '../types/teacher.types';
 
 class TeacherService {

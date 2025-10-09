@@ -1,8 +1,8 @@
-import type { FC } from "react";
-import { useEffect } from "react";
-import { AdminLayout } from "../../components/Layout/AdminLayout";
-import { BaseTopicsPage } from "../../components/Common/BaseTopicsPage";
-import { useAdminStore } from "../../stores/useAdminStore";
+import type {FC} from "react";
+import {useEffect} from "react";
+import {AdminLayout} from "../../components/Layout/AdminLayout";
+import {BaseTopicsPage} from "../../components/Common/BaseTopicsPage";
+import {useAdminStore} from "../../stores/useAdminStore";
 
 export const AdminTopicsPage: FC = () => {
   const {
@@ -23,7 +23,7 @@ export const AdminTopicsPage: FC = () => {
   return (
     <BaseTopicsPage
       Layout={AdminLayout}
-      colorScheme="red"
+      colorScheme="purple"
       title="Все темы"
       subtitle="Управление всеми темами в системе"
       topics={topics}

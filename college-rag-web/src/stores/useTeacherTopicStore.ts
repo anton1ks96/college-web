@@ -1,6 +1,6 @@
-import { create } from 'zustand';
-import type { TeacherTopic, StudentInfo } from '../types/teacher.types';
-import { teacherService } from '../services/teacher.service';
+import {create} from 'zustand';
+import type {StudentInfo, TeacherTopic} from '../types/teacher.types';
+import {teacherService} from '../services/teacher.service';
 
 interface TeacherTopicStore {
   topics: TeacherTopic[];

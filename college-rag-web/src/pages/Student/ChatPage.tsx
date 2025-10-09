@@ -1,9 +1,9 @@
-import type { FC } from "react";
-import { useState, useEffect } from "react";
-import { DatasetSidebar } from "../../components/Student/DatasetSidebar";
-import { ChatInterface } from "../../components/Student/ChatInterface";
-import { datasetService } from "../../services/dataset.service";
-import type { Dataset } from "../../types/dataset.types";
+import type {FC} from "react";
+import {useEffect, useState} from "react";
+import {DatasetSidebar} from "../../components/Student/DatasetSidebar";
+import {ChatInterface} from "../../components/Student/ChatInterface";
+import {datasetService} from "../../services/dataset.service";
+import type {Dataset} from "../../types/dataset.types";
 
 // Интерфейс Dataset перенесен в src/types/dataset.ts
 

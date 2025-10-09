@@ -1,7 +1,7 @@
-import type { FC } from "react";
-import { useState } from "react";
-import { useTeacherTopicStore } from "../../stores/useTeacherTopicStore";
-import { StudentSearch } from "./StudentSearch";
+import type {FC} from "react";
+import {useState} from "react";
+import {useTeacherTopicStore} from "../../stores/useTeacherTopicStore";
+import {StudentSearch} from "./StudentSearch";
 
 interface CreateTopicModalProps {
   isOpen: boolean;

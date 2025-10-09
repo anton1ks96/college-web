@@ -1,5 +1,5 @@
-import type { FC } from "react";
-import type { TeacherTopic } from "../../types/teacher.types";
+import type {FC} from "react";
+import type {TeacherTopic} from "../../types/teacher.types";
 
 interface TeacherTopicCardProps {
   topic: TeacherTopic;

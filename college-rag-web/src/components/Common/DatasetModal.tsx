@@ -1,6 +1,6 @@
-import type { FC } from "react";
-import type { Dataset } from "../../types/dataset.types";
-import type { ColorScheme } from "./Pagination";
+import type {FC} from "react";
+import type {Dataset} from "../../types/dataset.types";
+import type {ColorScheme} from "./Pagination";
 
 interface DatasetModalProps {
   dataset: Dataset | null;

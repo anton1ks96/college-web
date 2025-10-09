@@ -1,13 +1,13 @@
-import type { FC, ReactNode } from "react";
-import { useState } from "react";
-import { Pagination, type ColorScheme } from "./Pagination";
-import { LoadingSpinner } from "./LoadingSpinner";
-import { ErrorAlert } from "./ErrorAlert";
-import { TeacherTopicGrid } from "../Teacher/TeacherTopicGrid";
-import { CreateTopicModal } from "../Teacher/CreateTopicModal";
-import { TopicManagementModal } from "../Teacher/TopicManagementModal";
-import { AddStudentsModal } from "../Teacher/AddStudentsModal";
-import type { TeacherTopic } from "../../types/teacher.types";
+import type {FC, ReactNode} from "react";
+import {useState} from "react";
+import {type ColorScheme, Pagination} from "./Pagination";
+import {LoadingSpinner} from "./LoadingSpinner";
+import {ErrorAlert} from "./ErrorAlert";
+import {TeacherTopicGrid} from "../Teacher/TeacherTopicGrid";
+import {CreateTopicModal} from "../Teacher/CreateTopicModal";
+import {TopicManagementModal} from "../Teacher/TopicManagementModal";
+import {AddStudentsModal} from "../Teacher/AddStudentsModal";
+import type {TeacherTopic} from "../../types/teacher.types";
 
 interface BaseTopicsPageProps {
   Layout: FC<{ children: ReactNode }>;

@@ -1,6 +1,6 @@
-import { create } from "zustand";
-import { datasetService } from "../services/dataset.service";
-import type { Dataset, CreateDatasetForm } from "../types/dataset.types";
+import {create} from "zustand";
+import {datasetService} from "../services/dataset.service";
+import type {CreateDatasetForm, Dataset} from "../types/dataset.types";
 
 interface DatasetState {
   datasets: Dataset[];

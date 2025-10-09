@@ -1,8 +1,8 @@
-import type { FC } from "react";
-import { useEffect } from "react";
-import { TeacherLayout } from "../../components/Layout/TeacherLayout";
-import { BaseTopicsPage } from "../../components/Common/BaseTopicsPage";
-import { useTeacherTopicStore } from "../../stores/useTeacherTopicStore";
+import type {FC} from "react";
+import {useEffect} from "react";
+import {TeacherLayout} from "../../components/Layout/TeacherLayout";
+import {BaseTopicsPage} from "../../components/Common/BaseTopicsPage";
+import {useTeacherTopicStore} from "../../stores/useTeacherTopicStore";
 
 export const TeacherTopicsPage: FC = () => {
   const {

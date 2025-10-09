@@ -1,4 +1,4 @@
-import type { FC, ReactNode } from "react";
+import type {FC, ReactNode} from "react";
 
 interface EmptyStateProps {
   icon?: ReactNode;

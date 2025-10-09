@@ -1,7 +1,7 @@
-import type { FC } from "react";
-import { useEffect, useState } from "react";
-import type { TeacherTopic } from "../../types/teacher.types";
-import { teacherService } from "../../services/teacher.service";
+import type {FC} from "react";
+import {useEffect, useState} from "react";
+import type {TeacherTopic} from "../../types/teacher.types";
+import {teacherService} from "../../services/teacher.service";
 
 interface TopicManagementModalProps {
   isOpen: boolean;

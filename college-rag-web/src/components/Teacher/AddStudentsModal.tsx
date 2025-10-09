@@ -1,8 +1,8 @@
-import type { FC } from "react";
-import { useState, useEffect } from "react";
-import { StudentSearch } from "./StudentSearch";
-import { useTeacherTopicStore } from "../../stores/useTeacherTopicStore";
-import type { TeacherTopic } from "../../types/teacher.types";
+import type {FC} from "react";
+import {useEffect, useState} from "react";
+import {StudentSearch} from "./StudentSearch";
+import {useTeacherTopicStore} from "../../stores/useTeacherTopicStore";
+import type {TeacherTopic} from "../../types/teacher.types";
 
 interface AddStudentsModalProps {
   isOpen: boolean;

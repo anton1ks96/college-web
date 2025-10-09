@@ -1,6 +1,6 @@
-import { create } from 'zustand';
-import type { TopicWithAssignment } from '../types/topic.types';
-import { topicService } from '../services/topic.service';
+import {create} from 'zustand';
+import type {TopicWithAssignment} from '../types/topic.types';
+import {topicService} from '../services/topic.service';
 
 interface TopicStore {
   topics: TopicWithAssignment[];

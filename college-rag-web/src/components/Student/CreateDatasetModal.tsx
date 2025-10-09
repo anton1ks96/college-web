@@ -1,9 +1,9 @@
-import type { FC } from "react";
-import { useState, useEffect } from "react";
-import { useLocation } from "react-router-dom";
-import { useDatasetStore } from "../../stores/useDatasetStore";
-import { useTopicStore } from "../../stores/useTopicStore";
-import type { TopicWithAssignment } from "../../types/topic.types";
+import type {FC} from "react";
+import {useEffect, useState} from "react";
+import {useLocation} from "react-router-dom";
+import {useDatasetStore} from "../../stores/useDatasetStore";
+import {useTopicStore} from "../../stores/useTopicStore";
+import type {TopicWithAssignment} from "../../types/topic.types";
 
 interface CreateDatasetModalProps {
   isOpen: boolean;

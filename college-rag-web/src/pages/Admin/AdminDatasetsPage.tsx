@@ -1,10 +1,10 @@
-import type { FC } from "react";
-import { useEffect } from "react";
-import { AdminLayout } from "../../components/Layout/AdminLayout";
-import { BaseDatasetsPage } from "../../components/Common/BaseDatasetsPage";
-import { useAdminStore } from "../../stores/useAdminStore";
-import { datasetService } from "../../services/dataset.service";
-import { formatDate } from "../../utils/dateFormat";
+import type {FC} from "react";
+import {useEffect} from "react";
+import {AdminLayout} from "../../components/Layout/AdminLayout";
+import {BaseDatasetsPage} from "../../components/Common/BaseDatasetsPage";
+import {useAdminStore} from "../../stores/useAdminStore";
+import {datasetService} from "../../services/dataset.service";
+import {formatDate} from "../../utils/dateFormat";
 
 export const AdminDatasetsPage: FC = () => {
   const {
@@ -20,12 +20,11 @@ export const AdminDatasetsPage: FC = () => {
 
   useEffect(() => {
     fetchAllDatasets(1, datasetsPerPage);
-  }, []);
+  }, [fetchAllDatasets]);
 
   return (
     <BaseDatasetsPage
       Layout={AdminLayout}
-      colorScheme="red"
       title="Все датасеты"
       subtitle="Просмотр всех датасетов в системе"
       datasets={datasets}

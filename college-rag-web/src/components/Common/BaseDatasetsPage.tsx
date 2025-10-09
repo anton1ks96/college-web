@@ -1,16 +1,14 @@
-import type { FC, ReactNode } from "react";
-import { useState } from "react";
-import type { ColorScheme } from "./Pagination";
-import { Pagination } from "./Pagination";
-import { LoadingSpinner } from "./LoadingSpinner";
-import { ErrorAlert } from "./ErrorAlert";
-import { EmptyState } from "./EmptyState";
-import { DatasetModal } from "./DatasetModal";
-import type { Dataset } from "../../types/dataset.types";
+import type {FC, ReactNode} from "react";
+import {useState} from "react";
+import {Pagination} from "./Pagination";
+import {LoadingSpinner} from "./LoadingSpinner";
+import {ErrorAlert} from "./ErrorAlert";
+import {EmptyState} from "./EmptyState";
+import {DatasetModal} from "./DatasetModal";
+import type {Dataset} from "../../types/dataset.types";
 
 interface BaseDatasetsPageProps {
   Layout: FC<{ children: ReactNode }>;
-  colorScheme: ColorScheme;
   title: string;
   subtitle: string;
   datasets: Dataset[];
@@ -26,9 +24,10 @@ interface BaseDatasetsPageProps {
   formatDate: (dateString: string) => string;
 }
 
+type ViewMode = 'cards' | 'table';
+
 export const BaseDatasetsPage: FC<BaseDatasetsPageProps> = ({
   Layout,
-  colorScheme,
   title,
   subtitle,
   datasets,
@@ -45,6 +44,7 @@ export const BaseDatasetsPage: FC<BaseDatasetsPageProps> = ({
 }) => {
   const [selectedDataset, setSelectedDataset] = useState<Dataset | null>(null);
   const [isLoadingDataset, setIsLoadingDataset] = useState(false);
+  const [viewMode, setViewMode] = useState<ViewMode>('cards');
 
   const handleViewDataset = async (dataset: Dataset) => {
     setIsLoadingDataset(true);
@@ -64,30 +64,6 @@ export const BaseDatasetsPage: FC<BaseDatasetsPageProps> = ({
 
   const totalPages = Math.ceil(totalDatasets / datasetsPerPage);
 
-  const ringColorClasses: Record<ColorScheme, string> = {
-    purple: 'focus:ring-purple-500',
-    red: 'focus:ring-red-500',
-    blue: 'focus:ring-blue-500',
-    green: 'focus:ring-green-500',
-    yellow: 'focus:ring-yellow-500',
-  };
-
-  const borderColorClasses: Record<ColorScheme, string> = {
-    purple: 'hover:border-purple-300',
-    red: 'hover:border-red-300',
-    blue: 'hover:border-blue-300',
-    green: 'hover:border-green-300',
-    yellow: 'hover:border-yellow-300',
-  };
-
-  const bgColorClasses: Record<ColorScheme, string> = {
-    purple: 'bg-purple-50 text-purple-700 hover:bg-purple-100',
-    red: 'bg-red-50 text-red-700 hover:bg-red-100',
-    blue: 'bg-blue-50 text-blue-700 hover:bg-blue-100',
-    green: 'bg-green-50 text-green-700 hover:bg-green-100',
-    yellow: 'bg-yellow-50 text-yellow-700 hover:bg-yellow-100',
-  };
-
   return (
     <Layout>
       <div className="flex-1 overflow-hidden">
@@ -99,26 +75,62 @@ export const BaseDatasetsPage: FC<BaseDatasetsPageProps> = ({
                 <h2 className="text-2xl font-bold text-gray-900">{title}</h2>
                 <p className="mt-1 text-sm text-gray-600">{subtitle}</p>
               </div>
-              <button
-                onClick={() => fetchDatasets(currentPage, datasetsPerPage)}
-                disabled={isLoading}
-                className={`inline-flex items-center px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 ${ringColorClasses[colorScheme]} disabled:opacity-50 disabled:cursor-not-allowed`}
-              >
-                <svg
-                  className={`-ml-1 mr-2 h-4 w-4 ${isLoading ? 'animate-spin' : ''}`}
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
+              <div className="flex items-center space-x-3">
+                {/* View Mode Toggle */}
+                <div className="inline-flex rounded-lg border border-gray-300 bg-white p-1">
+                  <button
+                    onClick={() => setViewMode('cards')}
+                    className={`px-4 py-2 rounded-md text-sm font-medium transition-colors ${
+                      viewMode === 'cards'
+                        ? 'bg-purple-600 text-white'
+                        : 'text-gray-700 hover:bg-gray-50'
+                    }`}
+                  >
+                    <div className="flex items-center space-x-2">
+                      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" />
+                      </svg>
+                      <span>Карточки</span>
+                    </div>
+                  </button>
+                  <button
+                    onClick={() => setViewMode('table')}
+                    className={`px-4 py-2 rounded-md text-sm font-medium transition-colors ${
+                      viewMode === 'table'
+                        ? 'bg-purple-600 text-white'
+                        : 'text-gray-700 hover:bg-gray-50'
+                    }`}
+                  >
+                    <div className="flex items-center space-x-2">
+                      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 10h18M3 14h18m-9-4v8m-7 0h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z" />
+                      </svg>
+                      <span>Таблица</span>
+                    </div>
+                  </button>
+                </div>
+
+                <button
+                  onClick={() => fetchDatasets(currentPage, datasetsPerPage)}
+                  disabled={isLoading}
+                  className="inline-flex items-center px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-500 disabled:opacity-50 disabled:cursor-not-allowed"
                 >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"
-                  />
-                </svg>
-                Обновить
-              </button>
+                  <svg
+                    className={`-ml-1 mr-2 h-4 w-4 ${isLoading ? 'animate-spin' : ''}`}
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"
+                    />
+                  </svg>
+                  Обновить
+                </button>
+              </div>
             </div>
             {totalDatasets > 0 && (
               <div className="mt-2">
@@ -134,43 +146,28 @@ export const BaseDatasetsPage: FC<BaseDatasetsPageProps> = ({
             <ErrorAlert error={error} onClose={undefined} />
 
             {isLoading ? (
-              <LoadingSpinner colorScheme={colorScheme} />
+              <LoadingSpinner />
             ) : datasets && datasets.length > 0 ? (
               <>
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-                  {datasets.map((dataset) => (
-                    <div
-                      key={dataset.id}
-                      className={`bg-white rounded-xl shadow-md p-6 border border-gray-200 ${borderColorClasses[colorScheme]} transition-all duration-300`}
-                    >
-                      <div className="flex flex-col h-full">
-                        <h3 className="text-lg font-semibold text-gray-900 mb-2 line-clamp-2">
-                          {dataset.title}
-                        </h3>
-                        <p className="text-sm text-gray-600 mb-3">
-                          Студент: {dataset.author || 'Неизвестно'}
-                        </p>
-                        <div className="flex flex-col space-y-2 text-xs text-gray-500 mb-4">
-                          <div className="flex items-center">
-                            <svg
-                              className="w-4 h-4 mr-1.5 text-gray-400"
-                              fill="none"
-                              stroke="currentColor"
-                              viewBox="0 0 24 24"
-                            >
-                              <path
-                                strokeLinecap="round"
-                                strokeLinejoin="round"
-                                strokeWidth={2}
-                                d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
-                              />
-                            </svg>
-                            <span>Создан: {formatDate(dataset.created_at)}</span>
-                          </div>
-                          {dataset.indexed_at && (
+                {/* Cards View */}
+                {viewMode === 'cards' && (
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                    {datasets.map((dataset) => (
+                      <div
+                        key={dataset.id}
+                        className="group relative bg-white rounded-xl shadow-md hover:shadow-xl transition-all duration-300 p-6 cursor-pointer border border-gray-200 hover:border-purple-300"
+                      >
+                        <div className="flex flex-col h-full">
+                          <h3 className="text-lg font-semibold text-gray-900 mb-2 line-clamp-2">
+                            {dataset.title}
+                          </h3>
+                          <p className="text-sm text-gray-600 mb-3">
+                            Студент: {dataset.author || 'Неизвестно'}
+                          </p>
+                          <div className="flex flex-col space-y-2 text-xs text-gray-500 mb-4">
                             <div className="flex items-center">
                               <svg
-                                className="w-4 h-4 mr-1.5 text-green-500"
+                                className="w-4 h-4 mr-1.5 text-gray-400"
                                 fill="none"
                                 stroke="currentColor"
                                 viewBox="0 0 24 24"
@@ -179,30 +176,97 @@ export const BaseDatasetsPage: FC<BaseDatasetsPageProps> = ({
                                   strokeLinecap="round"
                                   strokeLinejoin="round"
                                   strokeWidth={2}
-                                  d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
+                                  d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
                                 />
                               </svg>
-                              <span>Проиндексирован</span>
+                              <span>Создан: {formatDate(dataset.created_at)}</span>
                             </div>
-                          )}
+                            {dataset.indexed_at && (
+                              <div className="flex items-center">
+                                <svg
+                                  className="w-4 h-4 mr-1.5 text-green-500"
+                                  fill="none"
+                                  stroke="currentColor"
+                                  viewBox="0 0 24 24"
+                                >
+                                  <path
+                                    strokeLinecap="round"
+                                    strokeLinejoin="round"
+                                    strokeWidth={2}
+                                    d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
+                                  />
+                                </svg>
+                                <span>Проиндексирован</span>
+                              </div>
+                            )}
+                          </div>
+                          <button
+                            onClick={() => handleViewDataset(dataset)}
+                            className="mt-auto w-full px-3 py-2 bg-purple-600 text-white hover:bg-purple-700 rounded-lg transition-colors text-sm font-medium"
+                          >
+                            Просмотреть
+                          </button>
                         </div>
-                        <button
-                          onClick={() => handleViewDataset(dataset)}
-                          className={`mt-auto w-full px-3 py-2 ${bgColorClasses[colorScheme]} rounded-lg transition-colors text-sm font-medium`}
-                        >
-                          Просмотреть
-                        </button>
                       </div>
-                    </div>
-                  ))}
-                </div>
+                    ))}
+                  </div>
+                )}
+
+                {/* Table View */}
+                {viewMode === 'table' && (
+                  <div className="bg-white rounded-lg shadow overflow-hidden">
+                    <table className="min-w-full divide-y divide-gray-200">
+                      <thead className="bg-gray-50">
+                        <tr>
+                          <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                            Название
+                          </th>
+                          <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                            Автор
+                          </th>
+                          <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                            Создан
+                          </th>
+                          <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                            Обновлен
+                          </th>
+                          <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                            Индексирован
+                          </th>
+                        </tr>
+                      </thead>
+                      <tbody className="bg-white divide-y divide-gray-200">
+                        {datasets.map((dataset) => (
+                          <tr key={dataset.id} className="hover:bg-gray-50">
+                            <td className="px-6 py-4">
+                              <div className="text-sm font-medium text-gray-900 max-w-md truncate">
+                                {dataset.title}
+                              </div>
+                            </td>
+                            <td className="px-6 py-4 whitespace-nowrap">
+                              <div className="text-sm text-gray-900">{dataset.author || 'Неизвестно'}</div>
+                            </td>
+                            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                              {formatDate(dataset.created_at)}
+                            </td>
+                            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                              {formatDate(dataset.updated_at)}
+                            </td>
+                            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                              {dataset.indexed_at ? formatDate(dataset.indexed_at) : '—'}
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                )}
 
                 {/* Pagination */}
                 <Pagination
                   currentPage={currentPage}
                   totalPages={totalPages}
                   onPageChange={setCurrentPage}
-                  colorScheme={colorScheme}
                 />
               </>
             ) : (
@@ -219,7 +283,6 @@ export const BaseDatasetsPage: FC<BaseDatasetsPageProps> = ({
           isLoading={isLoadingDataset}
           onClose={handleCloseModal}
           formatDate={formatDate}
-          colorScheme={colorScheme}
         />
       )}
     </Layout>

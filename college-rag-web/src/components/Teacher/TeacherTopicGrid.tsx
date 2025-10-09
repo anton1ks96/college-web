@@ -1,6 +1,6 @@
-import type { FC } from "react";
-import type { TeacherTopic } from "../../types/teacher.types";
-import { TeacherTopicCard } from "./TeacherTopicCard";
+import type {FC} from "react";
+import type {TeacherTopic} from "../../types/teacher.types";
+import {TeacherTopicCard} from "./TeacherTopicCard";
 
 interface TeacherTopicGridProps {
   topics: TeacherTopic[];

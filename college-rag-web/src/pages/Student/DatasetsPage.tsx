@@ -1,8 +1,8 @@
-import type { FC } from "react";
-import { useState, useEffect } from "react";
-import { DatasetGrid } from "../../components/Student/DatasetGrid";
-import { CreateDatasetModal } from "../../components/Student/CreateDatasetModal";
-import { useDatasetStore } from "../../stores/useDatasetStore";
+import type {FC} from "react";
+import {useEffect, useState} from "react";
+import {DatasetGrid} from "../../components/Student/DatasetGrid";
+import {CreateDatasetModal} from "../../components/Student/CreateDatasetModal";
+import {useDatasetStore} from "../../stores/useDatasetStore";
 
 export const DatasetsPage: FC = () => {
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);

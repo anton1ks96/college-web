@@ -1,5 +1,5 @@
 import {useEffect} from "react";
-import {BrowserRouter, Routes, Route, Navigate} from "react-router-dom";
+import {BrowserRouter, Navigate, Route, Routes} from "react-router-dom";
 import {useAuthStore} from "./stores/useAuthStore";
 import {ProtectedRoute} from "./components/ProtectedRoute";
 import {StudentLayout} from "./components/Layout/StudentLayout";

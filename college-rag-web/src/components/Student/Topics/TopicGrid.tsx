@@ -1,6 +1,6 @@
-import type { FC } from "react";
-import type { TopicWithAssignment } from "../../../types/topic.types";
-import { TopicCard } from "./TopicCard";
+import type {FC} from "react";
+import type {TopicWithAssignment} from "../../../types/topic.types";
+import {TopicCard} from "./TopicCard";
 
 interface TopicGridProps {
   topics: TopicWithAssignment[];

@@ -1,5 +1,5 @@
 import axios from "axios";
-import { getAccessToken } from "../utils/cookies";
+import {getAccessToken} from "../utils/cookies";
 
 export const authAPI = axios.create({
   baseURL: import.meta.env.VITE_AUTH_API_URL || "http://localhost:8000",

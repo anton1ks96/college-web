@@ -1,7 +1,7 @@
-import type { FC } from "react";
-import { useEffect } from "react";
-import { AdminLayout } from "../../components/Layout/AdminLayout";
-import { useAdminStore } from "../../stores/useAdminStore";
+import type {FC} from "react";
+import {useEffect} from "react";
+import {AdminLayout} from "../../components/Layout/AdminLayout";
+import {useAdminStore} from "../../stores/useAdminStore";
 
 export const AdminDatasetsTablePage: FC = () => {
   const {
@@ -49,7 +49,7 @@ export const AdminDatasetsTablePage: FC = () => {
               <button
                 onClick={() => fetchAllDatasets(currentDatasetsPage)}
                 disabled={isLoadingDatasets}
-                className="inline-flex items-center px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 disabled:opacity-50 disabled:cursor-not-allowed"
+                className="inline-flex items-center px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-500 disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 <svg
                   className={`-ml-1 mr-2 h-4 w-4 ${isLoadingDatasets ? 'animate-spin' : ''}`}
@@ -79,11 +79,11 @@ export const AdminDatasetsTablePage: FC = () => {
           {/* Content */}
           <div className="flex-1 overflow-auto bg-gray-50 p-6">
             {datasetsError && (
-              <div className="mb-4 bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg flex items-center justify-between">
+              <div className="mb-4 bg-purple-50 border border-purple-200 text-purple-700 px-4 py-3 rounded-lg flex items-center justify-between">
                 <span>{datasetsError}</span>
                 <button
                   onClick={clearDatasetsError}
-                  className="text-red-500 hover:text-red-700 focus:outline-none"
+                  className="text-purple-500 hover:text-purple-700 focus:outline-none"
                 >
                   <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
@@ -94,7 +94,7 @@ export const AdminDatasetsTablePage: FC = () => {
 
             {isLoadingDatasets ? (
               <div className="flex items-center justify-center h-64">
-                <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-red-600"></div>
+                <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-purple-600"></div>
               </div>
             ) : datasets.length > 0 ? (
               <>
@@ -180,7 +180,7 @@ export const AdminDatasetsTablePage: FC = () => {
                             onClick={() => handlePageChange(pageNum)}
                             className={`px-3 py-2 text-sm font-medium rounded-md ${
                               currentDatasetsPage === pageNum
-                                ? 'bg-red-600 text-white'
+                                ? 'bg-purple-600 text-white'
                                 : 'text-gray-700 bg-white border border-gray-300 hover:bg-gray-50'
                             }`}
                           >
