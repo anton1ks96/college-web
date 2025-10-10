@@ -38,6 +38,7 @@ export const AdminDatasetsPage: FC = () => {
       datasetsPerPage={datasetsPerPage}
       emptyStateText="В системе пока нет датасетов"
       formatDate={formatDate}
+      isAdmin={true}
     />
   );
 };

@@ -113,6 +113,10 @@ export const TopicManagementModal: FC<TopicManagementModalProps> = ({
                 <span className="font-medium text-gray-600">Описание:</span>
                 <p className="text-gray-900">{topic.description || "Не указано"}</p>
               </div>
+              <div>
+                <span className="font-medium text-gray-600">Создатель:</span>
+                <p className="text-gray-900">{topic.created_by}</p>
+              </div>
               <div className="grid grid-cols-2 gap-4 mt-3">
                 <div>
                   <span className="font-medium text-gray-600">Создана:</span>

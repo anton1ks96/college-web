@@ -38,17 +38,25 @@ export const TeacherTopicCard: FC<TeacherTopicCardProps> = ({
           {topic.description || "Описание отсутствует"}
         </p>
 
-        <div className="flex items-center justify-between pt-3 border-t border-gray-100">
-          <div className="flex items-center space-x-2">
-            <svg className="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" />
+        <div className="flex flex-col space-y-2 text-xs text-gray-500 pt-3 border-t border-gray-100">
+          <div className="flex items-center">
+            <svg className="w-4 h-4 mr-1.5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
             </svg>
-            <span className="text-xs font-medium text-gray-700">
-              {topic.student_count ?? topic.students?.length ?? 0} студентов
-            </span>
+            <span>Создатель: {topic.created_by}</span>
           </div>
-          <div className="text-xs text-gray-400">
-            {formatDate(topic.created_at)}
+          <div className="flex items-center justify-between">
+            <div className="flex items-center">
+              <svg className="w-4 h-4 mr-1.5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" />
+              </svg>
+              <span className="font-medium text-gray-700">
+                {topic.student_count ?? topic.students?.length ?? 0} студентов
+              </span>
+            </div>
+            <div className="text-gray-400">
+              {formatDate(topic.created_at)}
+            </div>
           </div>
         </div>
 

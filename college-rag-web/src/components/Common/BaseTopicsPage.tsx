@@ -131,11 +131,17 @@ export const BaseTopicsPage: FC<BaseTopicsPageProps> = ({
                 </button>
               </div>
             </div>
-            {totalTopics > 0 && (
-              <div className="mt-2">
+            <div className="mt-3 flex items-center justify-between">
+              {totalTopics > 0 && (
                 <span className="text-xs text-gray-500">Всего тем: {totalTopics}</span>
-              </div>
-            )}
+              )}
+              <Pagination
+                currentPage={currentPage}
+                totalPages={totalPages}
+                onPageChange={fetchTopics}
+                colorScheme={colorScheme}
+              />
+            </div>
           </div>
 
           <div className="flex-1 overflow-auto bg-gray-50 p-6">
@@ -151,13 +157,6 @@ export const BaseTopicsPage: FC<BaseTopicsPageProps> = ({
                 onAddStudents={handleAddStudents}
               />
             )}
-
-            <Pagination
-              currentPage={currentPage}
-              totalPages={totalPages}
-              onPageChange={fetchTopics}
-              colorScheme={colorScheme}
-            />
           </div>
         </div>
       </div>

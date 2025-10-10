@@ -5,6 +5,7 @@ import {LoadingSpinner} from "./LoadingSpinner";
 import {ErrorAlert} from "./ErrorAlert";
 import {EmptyState} from "./EmptyState";
 import {DatasetModal} from "./DatasetModal";
+import {DatasetPermissionsModal} from "../Admin/DatasetPermissionsModal";
 import type {Dataset} from "../../types/dataset.types";
 
 interface BaseDatasetsPageProps {
@@ -22,6 +23,7 @@ interface BaseDatasetsPageProps {
   datasetsPerPage: number;
   emptyStateText: string;
   formatDate: (dateString: string) => string;
+  isAdmin?: boolean;
 }
 
 type ViewMode = 'cards' | 'table';
@@ -41,10 +43,13 @@ export const BaseDatasetsPage: FC<BaseDatasetsPageProps> = ({
   datasetsPerPage,
   emptyStateText,
   formatDate,
+  isAdmin = false,
 }) => {
   const [selectedDataset, setSelectedDataset] = useState<Dataset | null>(null);
   const [isLoadingDataset, setIsLoadingDataset] = useState(false);
   const [viewMode, setViewMode] = useState<ViewMode>('cards');
+  const [isPermissionsModalOpen, setIsPermissionsModalOpen] = useState(false);
+  const [datasetForPermissions, setDatasetForPermissions] = useState<Dataset | null>(null);
 
   const handleViewDataset = async (dataset: Dataset) => {
     setIsLoadingDataset(true);
@@ -60,6 +65,11 @@ export const BaseDatasetsPage: FC<BaseDatasetsPageProps> = ({
 
   const handleCloseModal = () => {
     setSelectedDataset(null);
+  };
+
+  const handleManagePermissions = (dataset: Dataset) => {
+    setDatasetForPermissions(dataset);
+    setIsPermissionsModalOpen(true);
   };
 
   const totalPages = Math.ceil(totalDatasets / datasetsPerPage);
@@ -155,7 +165,7 @@ export const BaseDatasetsPage: FC<BaseDatasetsPageProps> = ({
                     {datasets.map((dataset) => (
                       <div
                         key={dataset.id}
-                        className="group relative bg-white rounded-xl shadow-md hover:shadow-xl transition-all duration-300 p-6 cursor-pointer border border-gray-200 hover:border-purple-300"
+                        className="group relative bg-white rounded-xl shadow-md hover:shadow-xl transition-all duration-300 p-6 border border-gray-200 hover:border-purple-300"
                       >
                         <div className="flex flex-col h-full">
                           <h3 className="text-lg font-semibold text-gray-900 mb-2 line-clamp-2">
@@ -200,12 +210,25 @@ export const BaseDatasetsPage: FC<BaseDatasetsPageProps> = ({
                               </div>
                             )}
                           </div>
-                          <button
-                            onClick={() => handleViewDataset(dataset)}
-                            className="mt-auto w-full px-3 py-2 bg-purple-600 text-white hover:bg-purple-700 rounded-lg transition-colors text-sm font-medium"
-                          >
-                            Просмотреть
-                          </button>
+                          <div className="mt-auto space-y-2">
+                            <button
+                              onClick={() => handleViewDataset(dataset)}
+                              className="w-full px-3 py-2 bg-purple-600 text-white hover:bg-purple-700 rounded-lg transition-colors text-sm font-medium"
+                            >
+                              Просмотреть
+                            </button>
+                            {isAdmin && (
+                              <button
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  handleManagePermissions(dataset);
+                                }}
+                                className="w-full px-3 py-2 bg-white text-purple-600 border border-purple-600 hover:bg-purple-50 rounded-lg transition-colors text-sm font-medium"
+                              >
+                                Управление доступом
+                              </button>
+                            )}
+                          </div>
                         </div>
                       </div>
                     ))}
@@ -233,15 +256,23 @@ export const BaseDatasetsPage: FC<BaseDatasetsPageProps> = ({
                           <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                             Индексирован
                           </th>
+                          {isAdmin && (
+                            <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+                              Действия
+                            </th>
+                          )}
                         </tr>
                       </thead>
                       <tbody className="bg-white divide-y divide-gray-200">
                         {datasets.map((dataset) => (
                           <tr key={dataset.id} className="hover:bg-gray-50">
                             <td className="px-6 py-4">
-                              <div className="text-sm font-medium text-gray-900 max-w-md truncate">
+                              <button
+                                onClick={() => handleViewDataset(dataset)}
+                                className="text-sm font-medium text-purple-600 hover:text-purple-900 max-w-md truncate text-left"
+                              >
                                 {dataset.title}
-                              </div>
+                              </button>
                             </td>
                             <td className="px-6 py-4 whitespace-nowrap">
                               <div className="text-sm text-gray-900">{dataset.author || 'Неизвестно'}</div>
@@ -255,6 +286,16 @@ export const BaseDatasetsPage: FC<BaseDatasetsPageProps> = ({
                             <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                               {dataset.indexed_at ? formatDate(dataset.indexed_at) : '—'}
                             </td>
+                            {isAdmin && (
+                              <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                                <button
+                                  onClick={() => handleManagePermissions(dataset)}
+                                  className="text-purple-600 hover:text-purple-900"
+                                >
+                                  Управление доступом
+                                </button>
+                              </td>
+                            )}
                           </tr>
                         ))}
                       </tbody>
@@ -283,6 +324,18 @@ export const BaseDatasetsPage: FC<BaseDatasetsPageProps> = ({
           isLoading={isLoadingDataset}
           onClose={handleCloseModal}
           formatDate={formatDate}
+        />
+      )}
+
+      {/* Dataset Permissions Modal */}
+      {isAdmin && (
+        <DatasetPermissionsModal
+          isOpen={isPermissionsModalOpen}
+          onClose={() => {
+            setIsPermissionsModalOpen(false);
+            setDatasetForPermissions(null);
+          }}
+          dataset={datasetForPermissions}
         />
       )}
     </Layout>

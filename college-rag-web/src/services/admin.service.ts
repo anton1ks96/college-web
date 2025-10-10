@@ -1,5 +1,10 @@
 import {coreAPI} from '../api/client';
-import type {TeacherTopicsResponse} from '../types/teacher.types';
+import type {
+  TeacherTopicsResponse,
+  TeacherSearchResponse,
+  DatasetPermissionsResponse,
+  GrantDatasetPermissionRequest
+} from '../types/teacher.types';
 import type {DatasetListResponse} from '../types/dataset.types';
 
 export interface AdminStats {
@@ -72,6 +77,37 @@ class AdminService {
 
   async deleteDataset(datasetId: string): Promise<void> {
     await coreAPI.delete(`/api/v1/datasets/${datasetId}`);
+  }
+
+  async searchTeachers(query: string): Promise<TeacherSearchResponse> {
+    const response = await coreAPI.post<TeacherSearchResponse>(
+      '/api/v1/search/teachers',
+      { query }
+    );
+    return response.data;
+  }
+
+  async grantDatasetPermission(datasetId: string, teacherId: string, teacherName: string): Promise<{id: string; message: string}> {
+    const requestData: GrantDatasetPermissionRequest = {
+      teacher_id: teacherId,
+      teacher_name: teacherName
+    };
+    const response = await coreAPI.post<{id: string; message: string}>(
+      `/api/v1/datasets/${datasetId}/permissions`,
+      requestData
+    );
+    return response.data;
+  }
+
+  async revokeDatasetPermission(datasetId: string, teacherId: string): Promise<void> {
+    await coreAPI.delete(`/api/v1/datasets/${datasetId}/permissions/${teacherId}`);
+  }
+
+  async getDatasetPermissions(datasetId: string): Promise<DatasetPermissionsResponse> {
+    const response = await coreAPI.get<DatasetPermissionsResponse>(
+      `/api/v1/datasets/${datasetId}/permissions`
+    );
+    return response.data;
   }
 }
 

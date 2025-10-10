@@ -61,3 +61,30 @@ export interface TopicStudentsResponse {
     assigned_at: string;
   }>;
 }
+
+export interface TeacherInfo {
+  id: string;
+  username: string;
+}
+
+export interface TeacherSearchResponse {
+  teachers: TeacherInfo[];
+  total: number;
+}
+
+export interface DatasetPermission {
+  id: string;
+  teacher_id: string;
+  teacher_name: string;
+  granted_by: string;
+  granted_at: string;
+}
+
+export interface GrantDatasetPermissionRequest {
+  teacher_id: string;
+  teacher_name: string;
+}
+
+export interface DatasetPermissionsResponse {
+  permissions: DatasetPermission[];
+}
