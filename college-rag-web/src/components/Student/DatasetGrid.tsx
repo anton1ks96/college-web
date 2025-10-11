@@ -1,7 +1,7 @@
-import type { FC } from "react";
-import { useState } from "react";
-import type { Dataset } from "../../types/dataset.types";
-import { DatasetEditModal } from "./DatasetEditModal";
+import type {FC} from "react";
+import {useState} from "react";
+import type {Dataset} from "../../types/dataset.types";
+import {DatasetEditModal} from "./DatasetEditModal";
 
 interface DatasetGridProps {
   datasets: Dataset[];

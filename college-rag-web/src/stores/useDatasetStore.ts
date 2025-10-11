@@ -1,6 +1,6 @@
-import { create } from "zustand";
-import { datasetService } from "../services/dataset.service";
-import type { Dataset, CreateDatasetForm } from "../types/dataset.types";
+import {create} from "zustand";
+import {datasetService} from "../services/dataset.service";
+import type {CreateDatasetForm, Dataset} from "../types/dataset.types";
 
 interface DatasetState {
   datasets: Dataset[];
@@ -10,6 +10,7 @@ interface DatasetState {
 
   // Actions
   fetchDatasets: (page?: number, limit?: number) => Promise<void>;
+  getDatasetById: (id: string) => Promise<Dataset>;
   createDataset: (data: CreateDatasetForm) => Promise<void>;
   deleteDataset: (id: string) => Promise<void>;
   reindexDataset: (id: string) => Promise<void>;
@@ -40,6 +41,21 @@ export const useDatasetStore = create<DatasetState>((set, get) => ({
     }
   },
 
+  getDatasetById: async (id: string) => {
+    set({ isLoading: true, error: null });
+    try {
+      const dataset = await datasetService.getDataset(id);
+      set({ isLoading: false });
+      return dataset;
+    } catch (error: any) {
+      set({
+        error: error.response?.data?.error || "Ошибка загрузки датасета",
+        isLoading: false,
+      });
+      throw error;
+    }
+  },
+
   createDataset: async (data) => {
     if (!data.content.trim()) {
       set({ error: "Содержимое не может быть пустым" });
@@ -48,7 +64,7 @@ export const useDatasetStore = create<DatasetState>((set, get) => ({
 
     set({ isLoading: true, error: null });
     try {
-      await datasetService.createDataset(data.title, data.content); // content теперь string
+      await datasetService.createDataset(data.title, data.content, data.assignmentId);
       await get().fetchDatasets();
       set({ isLoading: false });
     } catch (error: any) {

@@ -1,5 +1,5 @@
-import type { FC } from "react";
-import type { Dataset } from "../../types/dataset.types";
+import type {FC} from "react";
+import type {Dataset} from "../../types/dataset.types";
 
 interface DatasetSidebarProps {
   datasets: Dataset[];

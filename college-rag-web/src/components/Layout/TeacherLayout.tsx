@@ -3,11 +3,11 @@ import {useEffect, useRef, useState} from "react";
 import {useLocation, useNavigate} from "react-router-dom";
 import {useAuthStore} from "../../stores/useAuthStore";
 
-interface StudentLayoutProps {
+interface TeacherLayoutProps {
   children: ReactNode;
 }
 
-export const StudentLayout: FC<StudentLayoutProps> = ({ children }) => {
+export const TeacherLayout: FC<TeacherLayoutProps> = ({ children }) => {
   const { user, logout } = useAuthStore();
   const navigate = useNavigate();
   const location = useLocation();
@@ -51,9 +51,9 @@ export const StudentLayout: FC<StudentLayoutProps> = ({ children }) => {
               {/* Navigation */}
               <nav className="flex space-x-4">
                 <button
-                  onClick={() => navigate("/dashboard/chat")}
+                  onClick={() => navigate("/teacher/chat")}
                   className={`w-32 px-4 py-2 rounded-2xl font-medium transition-all duration-200 transform hover:shadow-lg hover:-translate-y-0.5 hover:opacity-100 focus:outline-none text-center ${
-                    isActive("/dashboard/chat")
+                    isActive("/teacher/chat")
                       ? "opacity-90"
                       : "opacity-80"
                   }`}
@@ -65,9 +65,9 @@ export const StudentLayout: FC<StudentLayoutProps> = ({ children }) => {
                   Чат
                 </button>
                 <button
-                  onClick={() => navigate("/dashboard/topics")}
+                  onClick={() => navigate("/teacher/topics")}
                   className={`w-32 px-4 py-2 rounded-2xl font-medium transition-all duration-200 transform hover:shadow-lg hover:-translate-y-0.5 hover:opacity-100 focus:outline-none text-center ${
-                    isActive("/dashboard/topics")
+                    isActive("/teacher/topics")
                       ? "opacity-90"
                       : "opacity-80"
                   }`}
@@ -76,12 +76,12 @@ export const StudentLayout: FC<StudentLayoutProps> = ({ children }) => {
                     color: "white"
                   }}
                 >
-                  Темы
+                  Мои темы
                 </button>
                 <button
-                  onClick={() => navigate("/dashboard/datasets")}
+                  onClick={() => navigate("/teacher/datasets")}
                   className={`w-32 px-4 py-2 rounded-2xl font-medium transition-all duration-200 transform hover:shadow-lg hover:-translate-y-0.5 hover:opacity-100 focus:outline-none text-center ${
-                    isActive("/dashboard/datasets")
+                    isActive("/teacher/datasets")
                       ? "opacity-90"
                       : "opacity-80"
                   }`}
@@ -117,7 +117,7 @@ export const StudentLayout: FC<StudentLayoutProps> = ({ children }) => {
                         {user.username}
                       </span>
                       <span className="text-sm font-medium text-gray-600">
-                        Студент
+                        Преподаватель
                       </span>
                     </div>
 

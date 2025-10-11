@@ -1,6 +1,6 @@
-import { create } from "zustand";
-import { authService } from "../services/auth.service";
-import type { LoginFormData, User } from "../types";
+import {create} from "zustand";
+import {authService} from "../services/auth.service";
+import type {LoginFormData, User} from "../types";
 
 interface AuthState {
   user: User | null;

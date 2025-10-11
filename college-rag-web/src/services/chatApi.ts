@@ -1,5 +1,5 @@
 import type {AskResponse} from "../types/chat";
-import { coreAPI } from "../api/client";
+import {coreAPI} from "../api/client";
 
 export const chatApi = {
   async askQuestion(datasetId: string, message: string): Promise<AskResponse> {

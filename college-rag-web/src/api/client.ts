@@ -1,5 +1,5 @@
 import axios from "axios";
-import { getAccessToken } from "../utils/cookies";
+import {getAccessToken} from "../utils/cookies";
 
 export const authAPI = axios.create({
   baseURL: "http://10.3.0.70:8000",

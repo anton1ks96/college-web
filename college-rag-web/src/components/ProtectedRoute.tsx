@@ -1,6 +1,6 @@
 import React from "react";
-import { Navigate } from "react-router-dom";
-import { useAuthStore } from "../stores/useAuthStore";
+import {Navigate} from "react-router-dom";
+import {useAuthStore} from "../stores/useAuthStore";
 
 interface ProtectedRouteProps {
   children: React.ReactNode;
@@ -29,6 +29,12 @@ export const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
   }
 
   if (allowedRoles && user && !allowedRoles.includes(user.role)) {
+    if (user.role === 'admin') {
+      return <Navigate to="/admin" replace />;
+    }
+    if (user.role === 'teacher') {
+      return <Navigate to="/teacher/topics" replace />;
+    }
     return <Navigate to="/dashboard" replace />;
   }
 

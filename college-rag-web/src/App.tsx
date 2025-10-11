@@ -1,11 +1,32 @@
 import {useEffect} from "react";
-import {BrowserRouter, Routes, Route, Navigate} from "react-router-dom";
+import {BrowserRouter, Navigate, Route, Routes} from "react-router-dom";
 import {useAuthStore} from "./stores/useAuthStore";
 import {ProtectedRoute} from "./components/ProtectedRoute";
 import {StudentLayout} from "./components/Layout/StudentLayout";
+import {TeacherLayout} from "./components/Layout/TeacherLayout";
+import {AdminLayout} from "./components/Layout/AdminLayout";
 import LoginPage from "./pages/Login/LoginPage";
 import {ChatPage} from "./pages/Student/ChatPage";
 import {DatasetsPage} from "./pages/Student/DatasetsPage.tsx";
+import {TopicsPage} from "./pages/Student/Topics/TopicsPage";
+import {TeacherTopicsPage} from "./pages/Teacher/TeacherTopicsPage";
+import {TeacherDatasetsPage} from "./pages/Teacher/TeacherDatasetsPage";
+import {AdminTopicsPage} from "./pages/Admin/AdminTopicsPage";
+import {AdminDatasetsPage} from "./pages/Admin/AdminDatasetsPage";
+import {AdminDatasetsTablePage} from "./pages/Admin/AdminDatasetsTablePage";
+
+// Component to redirect based on user role
+function RoleBasedRedirect() {
+    const {user} = useAuthStore();
+
+    if (user?.role === 'admin') {
+        return <Navigate to="/admin/topics" replace/>;
+    }
+    if (user?.role === 'teacher') {
+        return <Navigate to="/teacher/topics" replace/>;
+    }
+    return <Navigate to="/dashboard" replace/>;
+}
 
 function App() {
     const {checkAuth, isLoading} = useAuthStore();
@@ -54,6 +75,15 @@ function App() {
                 />
 
                 <Route
+                    path="/dashboard/topics"
+                    element={
+                        <ProtectedRoute allowedRoles={["student"]}>
+                            <TopicsPage/>
+                        </ProtectedRoute>
+                    }
+                />
+
+                <Route
                     path="/dashboard/datasets"
                     element={
                         <ProtectedRoute allowedRoles={["student"]}>
@@ -64,7 +94,90 @@ function App() {
                     }
                 />
 
-                <Route path="/" element={<Navigate to="/dashboard" replace/>}/>
+                {/* Teacher routes */}
+                <Route
+                    path="/teacher"
+                    element={
+                        <ProtectedRoute allowedRoles={["teacher"]}>
+                            <Navigate to="/teacher/topics" replace/>
+                        </ProtectedRoute>
+                    }
+                />
+
+                <Route
+                    path="/teacher/chat"
+                    element={
+                        <ProtectedRoute allowedRoles={["teacher"]}>
+                            <TeacherLayout>
+                                <ChatPage/>
+                            </TeacherLayout>
+                        </ProtectedRoute>
+                    }
+                />
+
+                <Route
+                    path="/teacher/topics"
+                    element={
+                        <ProtectedRoute allowedRoles={["teacher"]}>
+                            <TeacherTopicsPage/>
+                        </ProtectedRoute>
+                    }
+                />
+
+                <Route
+                    path="/teacher/datasets"
+                    element={
+                        <ProtectedRoute allowedRoles={["teacher"]}>
+                            <TeacherDatasetsPage/>
+                        </ProtectedRoute>
+                    }
+                />
+
+                <Route
+                    path="/admin/chat"
+                    element={
+                        <ProtectedRoute allowedRoles={["admin"]}>
+                            <AdminLayout>
+                                <ChatPage/>
+                            </AdminLayout>
+                        </ProtectedRoute>
+                    }
+                />
+
+                <Route
+                    path="/admin/topics"
+                    element={
+                        <ProtectedRoute allowedRoles={["admin"]}>
+                            <AdminTopicsPage/>
+                        </ProtectedRoute>
+                    }
+                />
+
+                <Route
+                    path="/admin/datasets"
+                    element={
+                        <ProtectedRoute allowedRoles={["admin"]}>
+                            <AdminDatasetsPage/>
+                        </ProtectedRoute>
+                    }
+                />
+
+
+                <Route
+                    path="/admin/datasets-table"
+                    element={
+                        <ProtectedRoute allowedRoles={["admin"]}>
+                            <AdminDatasetsTablePage/>
+                        </ProtectedRoute>
+                    }
+                />
+
+                {/* Root redirect based on role */}
+                <Route path="/" element={
+                    <ProtectedRoute allowedRoles={["student", "teacher", "admin"]}>
+                        <RoleBasedRedirect/>
+                    </ProtectedRoute>
+                }/>
             </Routes>
         </BrowserRouter>
     );

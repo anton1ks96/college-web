@@ -1,6 +1,6 @@
-import type { FC, ReactNode } from "react";
-import { useNavigate } from "react-router-dom";
-import { useAuthStore } from "../../stores/useAuthStore";
+import type {FC, ReactNode} from "react";
+import {useNavigate} from "react-router-dom";
+import {useAuthStore} from "../../stores/useAuthStore";
 
 interface LayoutProps {
   children: ReactNode;

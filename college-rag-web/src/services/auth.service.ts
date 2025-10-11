@@ -1,5 +1,5 @@
-import { authAPI } from "../api/client";
-import type { LoginFormData, LoginResponse, User } from "../types";
+import {authAPI} from "../api/client";
+import type {LoginFormData, LoginResponse, User} from "../types";
 
 class AuthService {
   async login(credentials: LoginFormData): Promise<LoginResponse> {

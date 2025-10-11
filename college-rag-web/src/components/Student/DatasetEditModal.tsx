@@ -1,7 +1,7 @@
-import type { FC } from "react";
-import { useState, useEffect } from "react";
-import type { Dataset } from "../../types/dataset.types";
-import { datasetService } from "../../services/dataset.service";
+import type {FC} from "react";
+import {useEffect, useState} from "react";
+import type {Dataset} from "../../types/dataset.types";
+import {datasetService} from "../../services/dataset.service";
 
 interface DatasetEditModalProps {
     dataset: Dataset | null;

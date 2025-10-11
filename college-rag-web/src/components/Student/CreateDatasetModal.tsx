@@ -1,6 +1,9 @@
-import type { FC } from "react";
-import { useState } from "react";
-import { useDatasetStore } from "../../stores/useDatasetStore";
+import type {FC} from "react";
+import {useEffect, useState} from "react";
+import {useLocation} from "react-router-dom";
+import {useDatasetStore} from "../../stores/useDatasetStore";
+import {useTopicStore} from "../../stores/useTopicStore";
+import type {TopicWithAssignment} from "../../types/topic.types";
 
 interface CreateDatasetModalProps {
   isOpen: boolean;
@@ -12,14 +15,34 @@ export const CreateDatasetModal: FC<CreateDatasetModalProps> = ({
   onClose,
 }) => {
   const { createDataset, isLoading, error, clearError } = useDatasetStore();
-  const [title, setTitle] = useState("");
+  const { topics, fetchAssignedTopics } = useTopicStore();
+  const location = useLocation();
   const [content, setContent] = useState("");
+  const [selectedTopic, setSelectedTopic] = useState<TopicWithAssignment | null>(null);
+
+  useEffect(() => {
+    if (isOpen && topics.length === 0) {
+      fetchAssignedTopics();
+    }
+  }, [fetchAssignedTopics, isOpen, topics.length]);
+
+  useEffect(() => {
+    if (location.state?.assignmentId && topics.length > 0) {
+      const topic = topics.find(t => t.assignment_id === location.state.assignmentId);
+      if (topic) {
+        setSelectedTopic(topic);
+      }
+    }
+  }, [location.state, topics]);
+
+  // Filter topics that don't have datasets yet (using backend flag)
+  const availableTopics = topics.filter(topic => !topic.has_dataset);
 
   if (!isOpen) return null;
 
   const handleSubmit = async () => {
-    if (!title.trim()) {
-      alert("Введите название датасета");
+    if (!selectedTopic) {
+      alert("Выберите тему для датасета");
       return;
     }
 
@@ -29,9 +52,13 @@ export const CreateDatasetModal: FC<CreateDatasetModalProps> = ({
     }
 
     try {
-      await createDataset({ title, content });
-      setTitle("");
+      await createDataset({
+        title: selectedTopic.topic.title,
+        content,
+        assignmentId: selectedTopic.assignment_id
+      });
       setContent("");
+      setSelectedTopic(null);
       onClose();
       // eslint-disable-next-line @typescript-eslint/no-unused-vars
     } catch (error) {
@@ -46,8 +73,8 @@ export const CreateDatasetModal: FC<CreateDatasetModalProps> = ({
     ) {
       return;
     }
-    setTitle("");
     setContent("");
+    setSelectedTopic(null);
     clearError();
     onClose();
   };
@@ -91,23 +118,50 @@ export const CreateDatasetModal: FC<CreateDatasetModalProps> = ({
             </div>
           )}
 
-          {/* Title input */}
+          {/* Topic selection */}
           <div className="mb-4 flex-shrink-0">
             <label
-              htmlFor="title"
+              htmlFor="topic"
               className="block text-sm font-medium text-gray-700 mb-2"
             >
-              Название датасета *
+              Тема *
             </label>
-            <input
-              id="title"
-              type="text"
-              value={title}
-              onChange={(e) => setTitle(e.target.value)}
-              placeholder="Например: Основы программирования"
+            <select
+              id="topic"
+              value={selectedTopic?.assignment_id || ""}
+              onChange={(e) => {
+                const topic = availableTopics.find(t => t.assignment_id === e.target.value);
+                setSelectedTopic(topic || null);
+              }}
               className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent"
-              disabled={isLoading}
-            />
+              disabled={isLoading || availableTopics.length === 0}
+            >
+              <option value="">
+                {availableTopics.length === 0
+                  ? "Нет доступных тем"
+                  : "Выберите тему"}
+              </option>
+              {availableTopics.map((topic) => (
+                <option key={topic.assignment_id} value={topic.assignment_id}>
+                  {topic.topic.title}
+                </option>
+              ))}
+            </select>
+            {selectedTopic && (
+              <p className="mt-1 text-xs text-gray-500">
+                Преподаватель: {selectedTopic.topic.created_by}
+              </p>
+            )}
+            {topics.length > 0 && availableTopics.length === 0 && (
+              <p className="mt-2 text-sm text-amber-600 bg-amber-50 border border-amber-200 rounded-lg p-2">
+                У всех назначенных вам тем уже есть датасеты. Можно создать только один датасет на тему.
+              </p>
+            )}
+            {topics.length > availableTopics.length && availableTopics.length > 0 && (
+              <p className="mt-2 text-xs text-gray-500">
+                Показаны только темы без датасетов ({availableTopics.length} из {topics.length})
+              </p>
+            )}
           </div>
 
           {/* Content Editor */}
@@ -175,7 +229,7 @@ export const CreateDatasetModal: FC<CreateDatasetModalProps> = ({
             </button>
             <button
               onClick={handleSubmit}
-              disabled={isLoading || !title.trim() || !content.trim()}
+              disabled={isLoading || !selectedTopic || !content.trim() || availableTopics.length === 0}
               className="px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors"
             >
               {isLoading ? (
