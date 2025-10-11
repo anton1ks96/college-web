@@ -3,7 +3,8 @@ import type {
   TeacherTopicsResponse,
   TeacherSearchResponse,
   DatasetPermissionsResponse,
-  GrantDatasetPermissionRequest
+  GrantDatasetPermissionRequest,
+  AllPermissionsResponse
 } from '../types/teacher.types';
 import type {DatasetListResponse} from '../types/dataset.types';
 
@@ -106,6 +107,13 @@ class AdminService {
   async getDatasetPermissions(datasetId: string): Promise<DatasetPermissionsResponse> {
     const response = await coreAPI.get<DatasetPermissionsResponse>(
       `/api/v1/datasets/${datasetId}/permissions`
+    );
+    return response.data;
+  }
+
+  async getAllPermissions(): Promise<AllPermissionsResponse> {
+    const response = await coreAPI.get<AllPermissionsResponse>(
+      '/api/v1/permissions'
     );
     return response.data;
   }

@@ -24,6 +24,7 @@ interface BaseDatasetsPageProps {
   emptyStateText: string;
   formatDate: (dateString: string) => string;
   isAdmin?: boolean;
+  additionalHeaderActions?: ReactNode;
 }
 
 type ViewMode = 'cards' | 'table';
@@ -44,6 +45,7 @@ export const BaseDatasetsPage: FC<BaseDatasetsPageProps> = ({
   emptyStateText,
   formatDate,
   isAdmin = false,
+  additionalHeaderActions,
 }) => {
   const [selectedDataset, setSelectedDataset] = useState<Dataset | null>(null);
   const [isLoadingDataset, setIsLoadingDataset] = useState(false);
@@ -119,6 +121,9 @@ export const BaseDatasetsPage: FC<BaseDatasetsPageProps> = ({
                     </div>
                   </button>
                 </div>
+
+                {/* Additional Header Actions */}
+                {additionalHeaderActions}
 
                 <button
                   onClick={() => fetchDatasets(currentPage, datasetsPerPage)}
@@ -256,23 +261,15 @@ export const BaseDatasetsPage: FC<BaseDatasetsPageProps> = ({
                           <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                             Индексирован
                           </th>
-                          {isAdmin && (
-                            <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
-                              Действия
-                            </th>
-                          )}
                         </tr>
                       </thead>
                       <tbody className="bg-white divide-y divide-gray-200">
                         {datasets.map((dataset) => (
                           <tr key={dataset.id} className="hover:bg-gray-50">
                             <td className="px-6 py-4">
-                              <button
-                                onClick={() => handleViewDataset(dataset)}
-                                className="text-sm font-medium text-purple-600 hover:text-purple-900 max-w-md truncate text-left"
-                              >
+                              <div className="text-sm font-medium text-gray-900 max-w-md truncate">
                                 {dataset.title}
-                              </button>
+                              </div>
                             </td>
                             <td className="px-6 py-4 whitespace-nowrap">
                               <div className="text-sm text-gray-900">{dataset.author || 'Неизвестно'}</div>
@@ -286,16 +283,6 @@ export const BaseDatasetsPage: FC<BaseDatasetsPageProps> = ({
                             <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                               {dataset.indexed_at ? formatDate(dataset.indexed_at) : '—'}
                             </td>
-                            {isAdmin && (
-                              <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                                <button
-                                  onClick={() => handleManagePermissions(dataset)}
-                                  className="text-purple-600 hover:text-purple-900"
-                                >
-                                  Управление доступом
-                                </button>
-                              </td>
-                            )}
                           </tr>
                         ))}
                       </tbody>

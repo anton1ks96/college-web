@@ -88,3 +88,18 @@ export interface GrantDatasetPermissionRequest {
 export interface DatasetPermissionsResponse {
   permissions: DatasetPermission[];
 }
+
+export interface AllDatasetPermission {
+  id: string;
+  dataset_id: string;
+  dataset_title?: string | null;
+  teacher_id: string;
+  teacher_name: string;
+  granted_by: string;
+  granted_at: string;
+}
+
+export interface AllPermissionsResponse {
+  permissions: AllDatasetPermission[];
+  total: number;
+}
