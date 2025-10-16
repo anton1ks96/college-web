@@ -83,10 +83,10 @@ export const DatasetSidebar: FC<DatasetSidebarProps> = ({
               datasets.map((dataset) => (
             <div
               key={dataset.id}
-              className={`p-3 rounded-lg border transition-all cursor-pointer ${
+              className={`p-3 rounded-md border transition-colors duration-200 cursor-pointer ${
                 selectedDataset === dataset.id
-                  ? "border-purple-300 bg-purple-50"
-                  : "border-gray-200 hover:border-gray-300 hover:bg-gray-50"
+                  ? "text-purple-600 bg-purple-50 border-purple-200 shadow-sm"
+                  : "text-gray-600 bg-white border-gray-200 hover:text-purple-600 hover:bg-purple-50/50 hover:border-purple-100"
               }`}
               onClick={() => onDatasetSelect(dataset.id)}
             >
@@ -98,14 +98,16 @@ export const DatasetSidebar: FC<DatasetSidebarProps> = ({
                     name="selectedDataset"
                     checked={selectedDataset === dataset.id}
                     onChange={() => {}}
-                    className="w-4 h-4 text-purple-600 focus:ring-purple-500 cursor-pointer"
+                    className="w-4 h-4 text-purple-600 focus:ring-purple-500 focus:ring-offset-0 border-gray-300 cursor-pointer accent-purple-600"
                     onClick={(e) => e.stopPropagation()}
                   />
                 </div>
 
                 {/* Dataset info */}
                 <div className="flex-1 min-w-0">
-                  <h3 className="text-sm font-medium text-gray-900 truncate">
+                  <h3 className={`text-sm font-medium truncate ${
+                    selectedDataset === dataset.id ? "text-purple-700" : "text-gray-900"
+                  }`}>
                     {dataset.title}
                   </h3>
                   <div className="flex items-center mt-1 space-x-2">

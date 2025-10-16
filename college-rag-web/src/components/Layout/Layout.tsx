@@ -20,7 +20,7 @@ export const Layout: FC<LayoutProps> = ({ children }) => {
       case "admin":
         return "bg-red-100 text-red-800";
       case "teacher":
-        return "bg-blue-100 text-blue-800";
+        return "bg-purple-100 text-purple-800";
       case "student":
         return "bg-green-100 text-green-800";
       default:
@@ -35,9 +35,7 @@ export const Layout: FC<LayoutProps> = ({ children }) => {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-16">
             <div className="flex items-center">
-              <h1 className="text-xl font-semibold text-gray-900">
-                Колледж RAG Platform
-              </h1>
+              <img src="/logo_light.png" alt="Колледж RAG" className="h-12" />
             </div>
 
             <div className="flex items-center space-x-4">
@@ -46,8 +44,8 @@ export const Layout: FC<LayoutProps> = ({ children }) => {
                   {/* User Profile Section */}
                   <div className="flex items-center space-x-3 bg-gray-50 rounded-lg px-4 py-3 my-2 border">
                     {/* Avatar Icon */}
-                    <div className="w-10 h-10 bg-purple-600 rounded-full flex items-center justify-center">
-                      <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <div className="w-10 h-10 bg-purple-50 border border-purple-200 rounded-full flex items-center justify-center shadow-sm">
+                      <svg className="w-5 h-5 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
                       </svg>
                     </div>
@@ -89,6 +87,15 @@ export const Layout: FC<LayoutProps> = ({ children }) => {
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {children}
       </main>
+
+      {/* Footer */}
+      <footer className="bg-white border-t mt-auto">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
+          <p className="text-center text-xs text-gray-400">
+            © 2021-2025 АНПОО "Колледж Цифровых Технологий" • Авторы студенты 2 курса: Иван Коломацкий, Артем Джапаридзе
+          </p>
+        </div>
+      </footer>
     </div>
   );
 };

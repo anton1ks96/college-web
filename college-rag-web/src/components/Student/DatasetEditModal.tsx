@@ -336,7 +336,7 @@ export const DatasetEditModal: FC<DatasetEditModalProps> = ({
                             <button
                                 onClick={handleReindex}
                                 disabled={isLoading || isReindexing}
-                                className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors disabled:bg-gray-300 disabled:cursor-not-allowed flex items-center"
+                                className="px-4 py-2 rounded-md font-medium text-sm transition-colors duration-200 focus:outline-none text-purple-600 bg-purple-50 border border-purple-200 hover:bg-purple-100 shadow-sm disabled:opacity-50 disabled:cursor-not-allowed flex items-center"
                                 title="Переиндексировать датасет для обновления поиска"
                             >
                                 {isReindexing ? (
@@ -362,7 +362,7 @@ export const DatasetEditModal: FC<DatasetEditModalProps> = ({
                     <div className="flex space-x-3">
                         <button
                             onClick={handleCancel}
-                            className="px-4 py-2 bg-gray-100 text-gray-700 rounded-md hover:bg-gray-200 transition-colors"
+                            className="px-4 py-2 rounded-md font-medium text-sm transition-colors duration-200 focus:outline-none text-gray-600 bg-white border border-gray-200 hover:text-gray-900 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
                             disabled={isLoading || isReindexing}
                         >
                             Отмена
@@ -371,7 +371,7 @@ export const DatasetEditModal: FC<DatasetEditModalProps> = ({
                         <button
                             onClick={handleSave}
                             disabled={isLoading || isReindexing || !title.trim() || !hasChanges}
-                            className="px-4 py-2 bg-gray-600 text-white rounded-md hover:bg-gray-700 transition-colors disabled:bg-gray-300 disabled:cursor-not-allowed"
+                            className="px-4 py-2 rounded-md font-medium text-sm transition-colors duration-200 focus:outline-none text-gray-600 bg-white border border-gray-200 hover:text-gray-900 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
                             title="Сохранить изменения без переиндексации"
                         >
                             {isLoading && !isReindexing ? "Сохранение..." : "Сохранить"}
@@ -380,7 +380,7 @@ export const DatasetEditModal: FC<DatasetEditModalProps> = ({
                         <button
                             onClick={handleSaveAndReindex}
                             disabled={isLoading || isReindexing || !title.trim() || !hasChanges}
-                            className="px-4 py-2 bg-purple-600 text-white rounded-md hover:bg-purple-700 transition-colors disabled:bg-gray-300 disabled:cursor-not-allowed flex items-center"
+                            className="px-4 py-2 rounded-md font-medium text-sm transition-colors duration-200 focus:outline-none text-purple-600 bg-purple-50 border border-purple-200 hover:bg-purple-100 shadow-sm disabled:opacity-50 disabled:cursor-not-allowed flex items-center"
                             title="Сохранить изменения и переиндексировать"
                         >
                             {isReindexing ? (

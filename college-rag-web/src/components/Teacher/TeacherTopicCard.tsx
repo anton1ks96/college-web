@@ -12,7 +12,6 @@ export const TeacherTopicCard: FC<TeacherTopicCardProps> = ({
   topic,
   onClick,
   onManage,
-  onAddStudents
 }) => {
   const formatDate = (dateString: string) => {
     return new Date(dateString).toLocaleDateString('ru-RU', {
@@ -60,24 +59,15 @@ export const TeacherTopicCard: FC<TeacherTopicCardProps> = ({
           </div>
         </div>
 
-        <div className="flex space-x-2">
+        <div className="flex">
           <button
             onClick={(e) => {
               e.stopPropagation();
               if (onManage) onManage();
             }}
-            className="flex-1 px-3 py-1.5 text-xs bg-purple-50 text-purple-700 rounded-lg hover:bg-purple-100 transition-colors"
+            className="w-full px-4 py-2 rounded-md font-medium text-sm transition-colors duration-200 focus:outline-none text-purple-600 bg-purple-50 border border-purple-200 hover:bg-purple-100 shadow-sm"
           >
             Управление
-          </button>
-          <button
-            onClick={(e) => {
-              e.stopPropagation();
-              if (onAddStudents) onAddStudents();
-            }}
-            className="flex-1 px-3 py-1.5 text-xs bg-gray-50 text-gray-700 rounded-lg hover:bg-gray-100 transition-colors"
-          >
-            + Студенты
           </button>
         </div>
       </div>

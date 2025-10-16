@@ -13,7 +13,7 @@ import type {
 class TeacherService {
   async searchStudents(query: string): Promise<StudentSearchResponse> {
     const response = await coreAPI.post<StudentSearchResponse>(
-      '/api/v1/students/search',
+      '/api/v1/search/students',
       { query }
     );
     return response.data;
@@ -57,6 +57,10 @@ class TeacherService {
       `/api/v1/topics/${topicId}/students`
     );
     return response.data;
+  }
+
+  async removeStudentFromTopic(topicId: string, studentId: string): Promise<void> {
+    await coreAPI.delete(`/api/v1/topics/${topicId}/students/${studentId}`);
   }
 
   // Переиспользуем метод для получения датасетов студентов

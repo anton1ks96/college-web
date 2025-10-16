@@ -82,7 +82,7 @@ export const TopicDetailModal: FC<TopicDetailModalProps> = ({
                       </p>
                       <button
                         onClick={handleCreateDataset}
-                        className="w-full sm:w-auto px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2"
+                        className="w-full sm:w-auto px-4 py-2 rounded-md font-medium text-sm transition-colors duration-200 focus:outline-none text-purple-600 bg-purple-50 border border-purple-200 hover:bg-purple-100 shadow-sm"
                       >
                         Создать датасет для темы
                       </button>

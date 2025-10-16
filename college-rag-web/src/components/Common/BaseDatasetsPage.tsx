@@ -89,13 +89,13 @@ export const BaseDatasetsPage: FC<BaseDatasetsPageProps> = ({
               </div>
               <div className="flex items-center space-x-3">
                 {/* View Mode Toggle */}
-                <div className="inline-flex rounded-lg border border-gray-300 bg-white p-1">
+                <div className="inline-flex space-x-2 border border-gray-200 rounded-lg p-1 bg-white shadow-sm">
                   <button
                     onClick={() => setViewMode('cards')}
-                    className={`px-4 py-2 rounded-md text-sm font-medium transition-colors ${
+                    className={`px-4 py-2 rounded-md text-sm font-medium transition-colors duration-200 focus:outline-none ${
                       viewMode === 'cards'
-                        ? 'bg-purple-600 text-white'
-                        : 'text-gray-700 hover:bg-gray-50'
+                        ? 'text-purple-600 bg-purple-50 border border-purple-200 shadow-sm'
+                        : 'text-gray-600 hover:text-purple-600 hover:bg-purple-50/50 border border-transparent'
                     }`}
                   >
                     <div className="flex items-center space-x-2">
@@ -107,10 +107,10 @@ export const BaseDatasetsPage: FC<BaseDatasetsPageProps> = ({
                   </button>
                   <button
                     onClick={() => setViewMode('table')}
-                    className={`px-4 py-2 rounded-md text-sm font-medium transition-colors ${
+                    className={`px-4 py-2 rounded-md text-sm font-medium transition-colors duration-200 focus:outline-none ${
                       viewMode === 'table'
-                        ? 'bg-purple-600 text-white'
-                        : 'text-gray-700 hover:bg-gray-50'
+                        ? 'text-purple-600 bg-purple-50 border border-purple-200 shadow-sm'
+                        : 'text-gray-600 hover:text-purple-600 hover:bg-purple-50/50 border border-transparent'
                     }`}
                   >
                     <div className="flex items-center space-x-2">
@@ -218,7 +218,7 @@ export const BaseDatasetsPage: FC<BaseDatasetsPageProps> = ({
                           <div className="mt-auto space-y-2">
                             <button
                               onClick={() => handleViewDataset(dataset)}
-                              className="w-full px-3 py-2 bg-purple-600 text-white hover:bg-purple-700 rounded-lg transition-colors text-sm font-medium"
+                              className="w-full px-4 py-2 rounded-md font-medium text-sm transition-colors duration-200 focus:outline-none text-purple-600 bg-purple-50 border border-purple-200 hover:bg-purple-100 shadow-sm"
                             >
                               Просмотреть
                             </button>
@@ -228,7 +228,7 @@ export const BaseDatasetsPage: FC<BaseDatasetsPageProps> = ({
                                   e.stopPropagation();
                                   handleManagePermissions(dataset);
                                 }}
-                                className="w-full px-3 py-2 bg-white text-purple-600 border border-purple-600 hover:bg-purple-50 rounded-lg transition-colors text-sm font-medium"
+                                className="w-full px-4 py-2 rounded-md font-medium text-sm transition-colors duration-200 focus:outline-none text-gray-600 bg-white border border-gray-200 hover:text-gray-900 hover:bg-gray-50"
                               >
                                 Управление доступом
                               </button>

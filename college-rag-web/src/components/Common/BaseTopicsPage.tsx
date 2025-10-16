@@ -71,14 +71,6 @@ export const BaseTopicsPage: FC<BaseTopicsPageProps> = ({
     yellow: 'focus:ring-yellow-500',
   };
 
-  const bgColorClasses: Record<ColorScheme, string> = {
-    purple: 'bg-purple-600 hover:bg-purple-700',
-    red: 'bg-red-600 hover:bg-red-700',
-    blue: 'bg-blue-600 hover:bg-blue-700',
-    green: 'bg-green-600 hover:bg-green-700',
-    yellow: 'bg-yellow-600 hover:bg-yellow-700',
-  };
-
   return (
     <Layout>
       <div className="flex-1 overflow-hidden">
@@ -112,7 +104,7 @@ export const BaseTopicsPage: FC<BaseTopicsPageProps> = ({
                 </button>
                 <button
                   onClick={() => setIsCreateModalOpen(true)}
-                  className={`inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white ${bgColorClasses[colorScheme]} focus:outline-none focus:ring-2 focus:ring-offset-2 ${ringColorClasses[colorScheme]}`}
+                  className="inline-flex items-center px-4 py-2 rounded-md font-medium text-sm transition-colors duration-200 focus:outline-none text-purple-600 bg-purple-50 border border-purple-200 hover:bg-purple-100 shadow-sm"
                 >
                   <svg
                     className="-ml-1 mr-2 h-5 w-5"

@@ -43,52 +43,38 @@ export const TeacherLayout: FC<TeacherLayoutProps> = ({ children }) => {
         <div className="px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center py-2">
             {/* Left side - Logo and Navigation */}
-            <div className="flex items-center space-x-6">
-              <h1 className="text-xl font-semibold text-gray-900">
-                Колледж RAG
-              </h1>
+            <div className="flex items-center space-x-44">
+              <img src="/logo_light.png" alt="Колледж RAG" className="h-12" />
 
               {/* Navigation */}
-              <nav className="flex space-x-4">
+              <nav className="flex space-x-2 border border-gray-200 rounded-lg p-1 bg-white shadow-sm">
                 <button
                   onClick={() => navigate("/teacher/chat")}
-                  className={`w-32 px-4 py-2 rounded-2xl font-medium transition-all duration-200 transform hover:shadow-lg hover:-translate-y-0.5 hover:opacity-100 focus:outline-none text-center ${
+                  className={`px-4 py-2 rounded-md font-medium transition-colors duration-200 focus:outline-none ${
                     isActive("/teacher/chat")
-                      ? "opacity-90"
-                      : "opacity-80"
+                      ? "text-purple-600 bg-purple-50 border border-purple-200"
+                      : "text-gray-600 hover:text-purple-600 hover:bg-purple-50/50 border border-transparent"
                   }`}
-                  style={{
-                    background: "#9333ea",
-                    color: "white"
-                  }}
                 >
                   Чат
                 </button>
                 <button
                   onClick={() => navigate("/teacher/topics")}
-                  className={`w-32 px-4 py-2 rounded-2xl font-medium transition-all duration-200 transform hover:shadow-lg hover:-translate-y-0.5 hover:opacity-100 focus:outline-none text-center ${
+                  className={`px-4 py-2 rounded-md font-medium transition-colors duration-200 focus:outline-none ${
                     isActive("/teacher/topics")
-                      ? "opacity-90"
-                      : "opacity-80"
+                      ? "text-purple-600 bg-purple-50 border border-purple-200"
+                      : "text-gray-600 hover:text-purple-600 hover:bg-purple-50/50 border border-transparent"
                   }`}
-                  style={{
-                    background: "#9333ea",
-                    color: "white"
-                  }}
                 >
                   Мои темы
                 </button>
                 <button
                   onClick={() => navigate("/teacher/datasets")}
-                  className={`w-32 px-4 py-2 rounded-2xl font-medium transition-all duration-200 transform hover:shadow-lg hover:-translate-y-0.5 hover:opacity-100 focus:outline-none text-center ${
+                  className={`px-4 py-2 rounded-md font-medium transition-colors duration-200 focus:outline-none ${
                     isActive("/teacher/datasets")
-                      ? "opacity-90"
-                      : "opacity-80"
+                      ? "text-purple-600 bg-purple-50 border border-purple-200"
+                      : "text-gray-600 hover:text-purple-600 hover:bg-purple-50/50 border border-transparent"
                   }`}
-                  style={{
-                    background: "#9333ea",
-                    color: "white"
-                  }}
                 >
                   Датасеты
                 </button>
@@ -105,8 +91,8 @@ export const TeacherLayout: FC<TeacherLayoutProps> = ({ children }) => {
                     className="flex items-center space-x-3 bg-gray-50 hover:bg-gray-100 rounded-lg px-3 py-2 my-1 border transition-colors focus:outline-none focus:ring-2 focus:ring-purple-500"
                   >
                     {/* Avatar Icon */}
-                    <div className="w-10 h-10 bg-purple-600 rounded-full flex items-center justify-center">
-                      <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <div className="w-10 h-10 bg-purple-50 border border-purple-200 rounded-full flex items-center justify-center shadow-sm">
+                      <svg className="w-5 h-5 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
                       </svg>
                     </div>
@@ -155,6 +141,15 @@ export const TeacherLayout: FC<TeacherLayoutProps> = ({ children }) => {
 
       {/* Main Content */}
       <main className="flex-1 flex overflow-hidden min-h-0">{children}</main>
+
+      {/* Footer */}
+      <footer className="bg-white border-t flex-shrink-0">
+        <div className="px-4 sm:px-6 lg:px-8 py-2">
+          <p className="text-center text-sm text-gray-400">
+            © 2021-2025 АНПОО "Колледж Цифровых Технологий" • Авторы студенты 2 курса: Иван Коломацкий, Артем Джапаридзе
+          </p>
+        </div>
+      </footer>
     </div>
   );
 };
