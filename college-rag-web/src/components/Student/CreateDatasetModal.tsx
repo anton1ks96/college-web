@@ -4,6 +4,11 @@ import {useLocation} from "react-router-dom";
 import {useDatasetStore} from "../../stores/useDatasetStore";
 import {useTopicStore} from "../../stores/useTopicStore";
 import type {TopicWithAssignment} from "../../types/topic.types";
+import {
+  createEmptyChunk,
+  serializeChunks,
+  type Chunk,
+} from "../../utils/datasetChunks";
 
 interface CreateDatasetModalProps {
   isOpen: boolean;
@@ -17,7 +22,7 @@ export const CreateDatasetModal: FC<CreateDatasetModalProps> = ({
   const { createDataset, isLoading, error, clearError } = useDatasetStore();
   const { topics, fetchAssignedTopics } = useTopicStore();
   const location = useLocation();
-  const [content, setContent] = useState("");
+  const [chunks, setChunks] = useState<Chunk[]>([createEmptyChunk()]);
   const [selectedTopic, setSelectedTopic] = useState<TopicWithAssignment | null>(null);
 
   useEffect(() => {
@@ -38,6 +43,8 @@ export const CreateDatasetModal: FC<CreateDatasetModalProps> = ({
   // Filter topics that don't have datasets yet (using backend flag)
   const availableTopics = topics.filter(topic => !topic.has_dataset);
 
+  const compiledContent = serializeChunks(chunks);
+
   if (!isOpen) return null;
 
   const handleSubmit = async () => {
@@ -46,7 +53,7 @@ export const CreateDatasetModal: FC<CreateDatasetModalProps> = ({
       return;
     }
 
-    if (!content.trim()) {
+    if (!compiledContent.trim()) {
       alert("Введите содержимое датасета");
       return;
     }
@@ -54,10 +61,10 @@ export const CreateDatasetModal: FC<CreateDatasetModalProps> = ({
     try {
       await createDataset({
         title: selectedTopic.topic.title,
-        content,
+        content: compiledContent.trim(),
         assignmentId: selectedTopic.assignment_id
       });
-      setContent("");
+      setChunks([createEmptyChunk()]);
       setSelectedTopic(null);
       onClose();
       // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -66,14 +73,43 @@ export const CreateDatasetModal: FC<CreateDatasetModalProps> = ({
     }
   };
 
+  const handleChunkChange = (
+    chunkId: string,
+    field: "title" | "body",
+    value: string,
+  ) => {
+    setChunks((prev) =>
+      prev.map((chunk) =>
+        chunk.id === chunkId ? {...chunk, [field]: value} : chunk,
+      ),
+    );
+  };
+
+  const handleAddChunk = (index: number) => {
+    setChunks((prev) => {
+      const next = [...prev];
+      next.splice(index + 1, 0, createEmptyChunk());
+      return next;
+    });
+  };
+
+  const handleRemoveChunk = (chunkId: string) => {
+    setChunks((prev) => {
+      if (prev.length === 1) {
+        return [createEmptyChunk()];
+      }
+      return prev.filter((chunk) => chunk.id !== chunkId);
+    });
+  };
+
   const handleClose = () => {
     if (
-      content.trim() &&
+      compiledContent.trim() &&
       !confirm("Вы уверены? Несохраненные изменения будут потеряны.")
     ) {
       return;
     }
-    setContent("");
+    setChunks([createEmptyChunk()]);
     setSelectedTopic(null);
     clearError();
     onClose();
@@ -166,25 +202,115 @@ export const CreateDatasetModal: FC<CreateDatasetModalProps> = ({
 
           {/* Content Editor */}
           <div className="flex-1 flex flex-col min-h-0">
-            <div className="flex items-center justify-between mb-2 flex-shrink-0">
-              <label className="block text-sm font-medium text-gray-700">
-                Содержимое датасета *
-              </label>
+            <div className="flex items-center justify-between mb-4 flex-shrink-0">
+              <div>
+                <p className="text-sm font-medium text-gray-700">Структура датасета *</p>
+                <p className="text-xs text-gray-500">
+                  Заголовок превратится в `## Заголовок` при сохранении
+                </p>
+              </div>
               <div className="flex items-center space-x-2">
                 <span className="text-xs text-gray-500">
-                  Символов: {content.length}
+                  Символов: {compiledContent.length}
                 </span>
               </div>
             </div>
 
-            <textarea
-              value={content}
-              onChange={(e) => setContent(e.target.value)}
-              className="flex-1 w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent resize-none font-mono text-sm"
-              placeholder="Введите содержимое датасета..."
-              disabled={isLoading}
-              style={{ minHeight: "400px" }}
-            />
+            <div className="flex-1 overflow-y-auto pr-2">
+              <div className="flex flex-col space-y-8">
+                {chunks.map((chunk, index) => {
+                  const order = index + 1;
+                  const canRemove = chunks.length > 1;
+
+                  return (
+                    <div
+                      key={chunk.id}
+                      className="w-full rounded-3xl border border-gray-200/80 bg-white/80 backdrop-blur-sm shadow-sm transition hover:shadow-md"
+                    >
+                      <div className="flex flex-wrap items-center justify-between gap-3 border-b border-gray-100 px-5 py-4">
+                        <div>
+                          <p className="text-xs font-semibold uppercase tracking-[0.25em] text-gray-500">
+                            Чанк {order.toString().padStart(2, "0")}
+                          </p>
+                          <p className="text-sm text-gray-400">
+                            {chunk.title ? chunk.title : "Добавьте краткий заголовок"}
+                          </p>
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <button
+                            type="button"
+                            onClick={() => handleAddChunk(index)}
+                            className="inline-flex h-9 items-center rounded-full border border-gray-200 bg-white px-4 text-xs font-semibold text-gray-700 transition hover:border-gray-300 hover:bg-gray-50 disabled:opacity-40"
+                            disabled={isLoading}
+                          >
+                            <span className="mr-2 text-lg leading-none">+</span>
+                            Добавить чанк
+                          </button>
+                          <button
+                            type="button"
+                            onClick={() => handleRemoveChunk(chunk.id)}
+                            className="inline-flex h-9 w-9 items-center justify-center rounded-full border border-gray-200 text-gray-500 transition hover:text-red-500 hover:border-red-200 disabled:opacity-40"
+                            disabled={isLoading || !canRemove}
+                            title={
+                              canRemove
+                                ? "Удалить этот блок"
+                                : "Нельзя удалить единственный блок"
+                            }
+                          >
+                            <svg
+                              className="h-4 w-4"
+                              fill="none"
+                              stroke="currentColor"
+                              viewBox="0 0 24 24"
+                            >
+                              <path
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                                strokeWidth="1.8"
+                                d="M6 7h12M9 7V5h6v2m-7 3v8m4-8v8m4-8v8M5 7l1 12a2 2 0 002 2h8a2 2 0 002-2l1-12"
+                              />
+                            </svg>
+                          </button>
+                        </div>
+                      </div>
+
+                      <div className="grid gap-5 px-5 py-5">
+                        <div>
+                          <label className="text-sm font-medium text-gray-700">
+                            Заголовок блока
+                          </label>
+                          <input
+                            type="text"
+                            value={chunk.title}
+                            onChange={(e) =>
+                              handleChunkChange(chunk.id, "title", e.target.value)
+                            }
+                            placeholder="Например: История направления"
+                            className="mt-2 w-full rounded-2xl border border-gray-200 bg-gray-50 px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                            disabled={isLoading}
+                          />
+                        </div>
+
+                        <div>
+                          <div className="flex items-center justify-between text-xs font-medium text-gray-500">
+                            <span>Контент</span>
+                          </div>
+                          <textarea
+                            value={chunk.body}
+                            onChange={(e) =>
+                              handleChunkChange(chunk.id, "body", e.target.value)
+                            }
+                            placeholder="Добавьте содержимое чанка..."
+                            className="mt-2 w-full min-h-[160px] resize-none rounded-2xl border border-gray-200 bg-white px-4 py-3 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                            disabled={isLoading}
+                          />
+                        </div>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
           </div>
 
           {/* Info */}
@@ -217,7 +343,7 @@ export const CreateDatasetModal: FC<CreateDatasetModalProps> = ({
         {/* Footer */}
         <div className="px-6 py-4 border-t border-gray-200 flex justify-between items-center flex-shrink-0">
           <div className="text-sm text-gray-500">
-            Совет: используйте заголовки для лучшей структуризации
+            Совет: разбивайте контент на небольшие осмысленные блоки
           </div>
           <div className="flex space-x-3">
             <button
@@ -229,7 +355,12 @@ export const CreateDatasetModal: FC<CreateDatasetModalProps> = ({
             </button>
             <button
               onClick={handleSubmit}
-              disabled={isLoading || !selectedTopic || !content.trim() || availableTopics.length === 0}
+              disabled={
+                isLoading ||
+                !selectedTopic ||
+                !compiledContent.trim() ||
+                availableTopics.length === 0
+              }
               className="px-4 py-2 rounded-md font-medium text-sm transition-colors duration-200 focus:outline-none text-purple-600 bg-purple-50 border border-purple-200 hover:bg-purple-100 shadow-sm disabled:opacity-50 disabled:cursor-not-allowed"
             >
               {isLoading ? (

@@ -2,6 +2,12 @@ import type {FC} from "react";
 import {useEffect, useState} from "react";
 import type {Dataset} from "../../types/dataset.types";
 import {datasetService} from "../../services/dataset.service";
+import {
+  createEmptyChunk,
+  parseContentToChunks,
+  serializeChunks,
+  type Chunk,
+} from "../../utils/datasetChunks";
 
 interface DatasetEditModalProps {
     dataset: Dataset | null;
@@ -17,7 +23,7 @@ export const DatasetEditModal: FC<DatasetEditModalProps> = ({
                                                                 onSave,
                                                             }) => {
     const [title, setTitle] = useState("");
-    const [content, setContent] = useState("");
+    const [chunks, setChunks] = useState<Chunk[]>([createEmptyChunk()]);
     const [originalTitle, setOriginalTitle] = useState("");
     const [originalContent, setOriginalContent] = useState("");
     const [isLoading, setIsLoading] = useState(false);
@@ -38,15 +44,16 @@ export const DatasetEditModal: FC<DatasetEditModalProps> = ({
 
                 try {
                     const fullDataset = await datasetService.getDataset(dataset.id);
-                    const datasetContent = fullDataset.content || "";
-                    setContent(datasetContent);
-                    setOriginalContent(datasetContent);
+                    const parsedChunks = parseContentToChunks(fullDataset.content || "");
+                    const datasetContent = serializeChunks(parsedChunks);
+                    setChunks(parsedChunks);
+                    setOriginalContent(datasetContent.trim());
                     setCurrentDataset(fullDataset);
                 } catch (error: any) {
                     setError("Ошибка при загрузке содержимого датасета");
-                    const fallbackContent = dataset.content || "";
-                    setContent(fallbackContent);
-                    setOriginalContent(fallbackContent);
+                    const fallbackChunks = parseContentToChunks(dataset.content || "");
+                    setChunks(fallbackChunks);
+                    setOriginalContent(serializeChunks(fallbackChunks).trim());
                 } finally {
                     setIsLoading(false);
                 }
@@ -56,7 +63,29 @@ export const DatasetEditModal: FC<DatasetEditModalProps> = ({
         loadDatasetContent();
     }, [dataset, isOpen]);
 
-    const hasChanges = title !== originalTitle || content !== originalContent;
+    const compiledContent = serializeChunks(chunks).trim();
+    const hasChanges = title !== originalTitle || compiledContent !== originalContent;
+
+    const handleChunkChange = (chunkId: string, field: "title" | "body", value: string) => {
+        setChunks((prev) => prev.map((chunk) => (chunk.id === chunkId ? {...chunk, [field]: value} : chunk)));
+    };
+
+    const handleAddChunk = (index: number) => {
+        setChunks((prev) => {
+            const next = [...prev];
+            next.splice(index + 1, 0, createEmptyChunk());
+            return next;
+        });
+    };
+
+    const handleRemoveChunk = (chunkId: string) => {
+        setChunks((prev) => {
+            if (prev.length === 1) {
+                return [createEmptyChunk()];
+            }
+            return prev.filter((chunk) => chunk.id !== chunkId);
+        });
+    };
 
     const needsReindexing = currentDataset && (
         !currentDataset.indexed_at ||
@@ -70,6 +99,11 @@ export const DatasetEditModal: FC<DatasetEditModalProps> = ({
             return;
         }
 
+        if (!compiledContent) {
+            setError("Введите содержимое датасета");
+            return;
+        }
+
         if (!hasChanges) {
             setError("Нет изменений для сохранения");
             return;
@@ -80,10 +114,10 @@ export const DatasetEditModal: FC<DatasetEditModalProps> = ({
         setSuccessMessage(null);
 
         try {
-            const updatedDataset = await datasetService.updateDataset(dataset.id, title, content);
+            const updatedDataset = await datasetService.updateDataset(dataset.id, title, compiledContent);
 
             setOriginalTitle(title);
-            setOriginalContent(content);
+            setOriginalContent(compiledContent);
 
             setCurrentDataset(updatedDataset);
 
@@ -103,6 +137,11 @@ export const DatasetEditModal: FC<DatasetEditModalProps> = ({
             return;
         }
 
+        if (!compiledContent) {
+            setError("Введите содержимое датасета");
+            return;
+        }
+
         setIsLoading(true);
         setIsReindexing(true);
         setError(null);
@@ -110,9 +149,9 @@ export const DatasetEditModal: FC<DatasetEditModalProps> = ({
 
         try {
             if (hasChanges) {
-                const updatedDataset = await datasetService.updateDataset(dataset.id, title, content);
+                const updatedDataset = await datasetService.updateDataset(dataset.id, title, compiledContent);
                 setOriginalTitle(title);
-                setOriginalContent(content);
+                setOriginalContent(compiledContent);
                 setCurrentDataset(updatedDataset);
             }
 
@@ -161,7 +200,7 @@ export const DatasetEditModal: FC<DatasetEditModalProps> = ({
     const handleCancel = () => {
         onClose();
         setTitle(originalTitle);
-        setContent(originalContent);
+        setChunks(parseContentToChunks(originalContent));
         setError(null);
         setSuccessMessage(null);
         setCurrentDataset(null);
@@ -260,35 +299,120 @@ export const DatasetEditModal: FC<DatasetEditModalProps> = ({
 
                     {/* Content Editor */}
                     <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-2">
-                            Содержимое датасета
-                        </label>
-                        {isLoading && !content ? (
-                            <div className="w-full h-96 border border-gray-300 rounded-md flex items-center justify-center">
+                        <div className="flex items-center justify-between mb-2">
+                            <div>
+                                <label className="block text-sm font-medium text-gray-700">
+                                    Структура датасета
+                                </label>
+                            </div>
+                            <div className="text-xs text-gray-500">
+                                Символов: {compiledContent.length}
+                            </div>
+                        </div>
+
+                        {isLoading && !compiledContent ? (
+                            <div className="w-full h-96 border border-gray-200 rounded-3xl flex items-center justify-center bg-gray-50">
                                 <div className="text-center">
                                     <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-purple-600 mx-auto mb-2"></div>
                                     <p className="text-sm text-gray-500">Загрузка содержимого...</p>
                                 </div>
                             </div>
                         ) : (
-                            <textarea
-                                value={content}
-                                onChange={(e) => setContent(e.target.value)}
-                                className="w-full h-96 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent resize-none font-mono text-sm"
-                                placeholder="Введите содержимое датасета..."
-                                disabled={isLoading || isReindexing}
-                            />
+                            <div className="max-h-[26rem] overflow-y-auto pr-2">
+                                <div className="flex flex-col space-y-8">
+                                    {chunks.map((chunk, index) => {
+                                        const order = index + 1;
+                                        const canRemove = chunks.length > 1;
+                                        const disabled = isLoading || isReindexing;
+
+                                        return (
+                                            <div
+                                                key={chunk.id}
+                                                className="w-full rounded-3xl border border-gray-200/80 bg-white/80 backdrop-blur-sm shadow-sm transition hover:shadow-md"
+                                            >
+                                                <div className="flex flex-wrap items-center justify-between gap-3 border-b border-gray-100 px-5 py-4">
+                                                    <div>
+                                                        <p className="text-xs font-semibold uppercase tracking-[0.25em] text-gray-500">
+                                                            Чанк {order.toString().padStart(2, "0")}
+                                                        </p>
+                                                        <p className="text-sm text-gray-400">
+                                                            {chunk.title ? chunk.title : "Добавьте название блока"}
+                                                        </p>
+                                                    </div>
+                                                    <div className="flex items-center gap-2">
+                                                        <button
+                                                            type="button"
+                                                            onClick={() => handleAddChunk(index)}
+                                                            disabled={disabled}
+                                                            className="inline-flex h-9 items-center rounded-full border border-gray-200 bg-white px-4 text-xs font-semibold text-gray-700 transition hover:border-gray-300 hover:bg-gray-50 disabled:opacity-40"
+                                                        >
+                                                            <span className="mr-2 text-lg leading-none">+</span>
+                                                            Добавить чанк
+                                                        </button>
+                                                        <button
+                                                            type="button"
+                                                            onClick={() => handleRemoveChunk(chunk.id)}
+                                                            disabled={disabled || !canRemove}
+                                                            className="inline-flex h-9 w-9 items-center justify-center rounded-full border border-gray-200 text-gray-500 transition hover:text-red-500 hover:border-red-200 disabled:opacity-40"
+                                                            title={canRemove ? "Удалить этот блок" : "Нельзя удалить единственный блок"}
+                                                        >
+                                                            <svg
+                                                                className="h-4 w-4"
+                                                                fill="none"
+                                                                stroke="currentColor"
+                                                                viewBox="0 0 24 24"
+                                                            >
+                                                                <path
+                                                                    strokeLinecap="round"
+                                                                    strokeLinejoin="round"
+                                                                    strokeWidth="1.8"
+                                                                    d="M6 7h12M9 7V5h6v2m-7 3v8m4-8v8m4-8v8M5 7l1 12a2 2 0 002 2h8a2 2 0 002-2l1-12"
+                                                                />
+                                                            </svg>
+                                                        </button>
+                                                    </div>
+                                                </div>
+
+                                                <div className="grid gap-5 px-5 py-5">
+                                                    <div>
+                                                        <label className="text-sm font-medium text-gray-700">
+                                                            Заголовок чанка
+                                                        </label>
+                                                        <input
+                                                            type="text"
+                                                            value={chunk.title}
+                                                            onChange={(e) => handleChunkChange(chunk.id, "title", e.target.value)}
+                                                            disabled={disabled}
+                                                            placeholder="Например: Введение"
+                                                            className="mt-2 w-full rounded-2xl border border-gray-200 bg-gray-50 px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                                                        />
+                                                    </div>
+
+                                                    <div>
+                                                        <div className="flex items-center justify-between text-xs font-medium text-gray-500">
+                                                            <span>Контент</span>
+                                                        </div>
+                                                        <textarea
+                                                            value={chunk.body}
+                                                            onChange={(e) => handleChunkChange(chunk.id, "body", e.target.value)}
+                                                            disabled={disabled}
+                                                            placeholder="Добавьте содержимое чанка..."
+                                                            className="mt-2 w-full min-h-[160px] resize-none rounded-2xl border border-gray-200 bg-white px-4 py-3 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                                                        />
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        );
+                                    })}
+                                </div>
+                            </div>
                         )}
-                        <div className="mt-1 flex justify-between items-center">
-                            <p className="text-xs text-gray-500">
-                                Символов: {content.length}
-                            </p>
-                            {hasChanges && (
-                                <span className="text-xs text-amber-600 font-medium">
-                  ⚠️ Есть несохраненные изменения
-                </span>
-                            )}
-                        </div>
+
+                        {hasChanges && (
+                            <div className="mt-2 text-xs text-amber-600 font-medium">
+                                ⚠️ Есть несохраненные изменения
+                            </div>
+                        )}
                     </div>
 
                     {/* Info box */}
@@ -370,7 +494,7 @@ export const DatasetEditModal: FC<DatasetEditModalProps> = ({
 
                         <button
                             onClick={handleSave}
-                            disabled={isLoading || isReindexing || !title.trim() || !hasChanges}
+                            disabled={isLoading || isReindexing || !title.trim() || !compiledContent || !hasChanges}
                             className="px-4 py-2 rounded-md font-medium text-sm transition-colors duration-200 focus:outline-none text-gray-600 bg-white border border-gray-200 hover:text-gray-900 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
                             title="Сохранить изменения без переиндексации"
                         >
@@ -379,7 +503,7 @@ export const DatasetEditModal: FC<DatasetEditModalProps> = ({
 
                         <button
                             onClick={handleSaveAndReindex}
-                            disabled={isLoading || isReindexing || !title.trim() || !hasChanges}
+                            disabled={isLoading || isReindexing || !title.trim() || !compiledContent}
                             className="px-4 py-2 rounded-md font-medium text-sm transition-colors duration-200 focus:outline-none text-purple-600 bg-purple-50 border border-purple-200 hover:bg-purple-100 shadow-sm disabled:opacity-50 disabled:cursor-not-allowed flex items-center"
                             title="Сохранить изменения и переиндексировать"
                         >
