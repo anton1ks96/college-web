@@ -27,6 +27,13 @@ export const ChatInterface: FC<ChatInterfaceProps> = ({
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
+  const extractThinkContent = (text: string) => {
+    const thinkMatch = text.match(/<think>([\s\S]*?)<\/think>/i);
+    const hiddenText = thinkMatch ? thinkMatch[1].trim() : null;
+    const visibleText = thinkMatch ? text.replace(thinkMatch[0], "").trim() : text;
+    return {visibleText, hiddenText};
+  };
+
   const handleSendMessage = async () => {
     if (!inputValue.trim() || !selectedDataset) return;
 
@@ -114,7 +121,28 @@ export const ChatInterface: FC<ChatInterfaceProps> = ({
                       : "bg-white border border-gray-200 text-gray-900"
                   }`}
                 >
-                  <p className="text-sm">{message.text}</p>
+                  {(() => {
+                    const {visibleText, hiddenText} = extractThinkContent(
+                      message.text,
+                    );
+                    return (
+                      <>
+                        {visibleText && (
+                          <p className="text-sm whitespace-pre-wrap">{visibleText}</p>
+                        )}
+                        {hiddenText && (
+                          <details className="mt-3 rounded-lg border border-dashed border-gray-300 bg-gray-50 px-3 py-2 text-sm text-gray-700">
+                            <summary className="cursor-pointer select-none text-xs font-semibold uppercase tracking-wide text-gray-500">
+                              Рассуждения
+                            </summary>
+                            <pre className="mt-2 whitespace-pre-wrap text-xs text-gray-600">
+                              {hiddenText}
+                            </pre>
+                          </details>
+                        )}
+                      </>
+                    );
+                  })()}
 
                   {/* Отображение ошибки */}
                   {message.error && (
