@@ -309,6 +309,14 @@ export const DatasetEditModal: FC<DatasetEditModalProps> = ({
                                 Символов: {compiledContent.length}
                             </div>
                         </div>
+                        <div className="flex items-start gap-2 rounded-2xl bg-gray-50 border border-gray-200 px-4 py-3 text-xs text-gray-600 mb-4">
+                            <div className="flex h-5 w-5 items-center justify-center rounded-full bg-amber-100 text-amber-600 font-bold">
+                                !
+                            </div>
+                            <p>
+                                Идеальный чанк — 400–800 символов с коротким заголовком и 2–3 абзацами. Держите в одном чанке одну мысль, не смешивайте темы.
+                            </p>
+                        </div>
 
                         {isLoading && !compiledContent ? (
                             <div className="w-full h-96 border border-gray-200 rounded-3xl flex items-center justify-center bg-gray-50">

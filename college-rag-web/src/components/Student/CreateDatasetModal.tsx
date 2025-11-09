@@ -215,6 +215,14 @@ export const CreateDatasetModal: FC<CreateDatasetModalProps> = ({
                 </span>
               </div>
             </div>
+            <div className="flex items-start gap-2 rounded-2xl bg-gray-50 border border-gray-200 px-4 py-3 text-xs text-gray-600 mb-4">
+              <div className="flex h-5 w-5 items-center justify-center rounded-full bg-amber-100 text-amber-600 font-bold">
+                !
+              </div>
+              <p>
+                Делите материал на чанки 400–800 символов: короткий заголовок, затем 2–3 абзаца. Один чанк описывает одну мысль, без длинных полотен и смешения тем.
+              </p>
+            </div>
 
             <div className="flex-1 overflow-y-auto pr-2">
               <div className="flex flex-col space-y-8">
