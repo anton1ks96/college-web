@@ -8,7 +8,6 @@ interface DatasetState {
   isLoading: boolean;
   error: string | null;
 
-  // Actions
   fetchDatasets: (page?: number, limit?: number) => Promise<void>;
   getDatasetById: (id: string) => Promise<Dataset>;
   createDataset: (data: CreateDatasetForm) => Promise<void>;

@@ -3,6 +3,13 @@ import {useState} from "react";
 import type {Dataset} from "../../types/dataset.types";
 import {chatApi} from "../../services/chatApi";
 import type {Citation} from "../../types/chat";
+import type {SavedChat, SavedChatListItem} from "../../types/savedChat.types";
+import {useAuthStore} from "../../stores/useAuthStore";
+import {useSavedChatStore} from "../../stores/useSavedChatStore";
+import {SaveChatModal} from "../Common/SaveChatModal";
+import {SavedChatsList} from "../Common/SavedChatsList";
+import {SavedChatViewModal} from "../Common/SavedChatViewModal";
+import {ConfirmDeleteModal} from "../Common/ConfirmDeleteModal";
 
 interface ChatInterfaceProps {
   selectedDataset: string | null;
@@ -26,6 +33,31 @@ export const ChatInterface: FC<ChatInterfaceProps> = ({
   const [inputValue, setInputValue] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+
+  // Saved chats state
+  const [isSaveModalOpen, setIsSaveModalOpen] = useState(false);
+  const [isSavedChatsOpen, setIsSavedChatsOpen] = useState(false);
+  const [viewingChat, setViewingChat] = useState<SavedChat | null>(null);
+  const [deletingChat, setDeletingChat] = useState<SavedChatListItem | null>(null);
+
+  // Auth and saved chats stores
+  const {user} = useAuthStore();
+  const {
+    chats,
+    isLoading: isLoadingChats,
+    isSaving,
+    isDeleting,
+    fetchChats,
+    fetchChatById,
+    createChat,
+    updateChat,
+    deleteChat,
+    downloadChat,
+    setCurrentChat,
+  } = useSavedChatStore();
+
+  // Check if user can save chats (teacher or admin only)
+  const canSaveChats = user?.role === "teacher" || user?.role === "admin";
 
   const extractThinkContent = (text: string) => {
     const thinkMatch = text.match(/<think>([\s\S]*?)<\/think>/i);
@@ -58,6 +90,7 @@ export const ChatInterface: FC<ChatInterfaceProps> = ({
         text: response.answer,
         sender: "assistant",
         timestamp: new Date(),
+        citations: response.citations,
       };
 
       setMessages((prev) => [...prev, assistantMessage]);
@@ -79,6 +112,79 @@ export const ChatInterface: FC<ChatInterfaceProps> = ({
     }
   };
 
+  // Saved chats handlers
+  const handleSaveChat = async (title: string) => {
+    if (!selectedDataset || messages.length === 0) return;
+
+    // Convert messages to API format (pair user questions with assistant answers)
+    const chatMessages: {question: string; answer: string; citations: Citation[]}[] = [];
+    for (let i = 0; i < messages.length; i++) {
+      const msg = messages[i];
+      if (msg.sender === "user") {
+        // Find the next assistant message
+        const nextMsg = messages[i + 1];
+        if (nextMsg && nextMsg.sender === "assistant" && !nextMsg.error) {
+          chatMessages.push({
+            question: msg.text,
+            answer: nextMsg.text,
+            citations: nextMsg.citations || [],
+          });
+        }
+      }
+    }
+
+    if (chatMessages.length === 0) return;
+
+    await createChat(selectedDataset, {title, messages: chatMessages});
+  };
+
+  const handleOpenSavedChats = () => {
+    if (selectedDataset) {
+      fetchChats(selectedDataset);
+      setIsSavedChatsOpen(true);
+    }
+  };
+
+  const handleViewChat = async (chat: SavedChatListItem) => {
+    setIsSavedChatsOpen(false);
+    const fullChat = await fetchChatById(chat.id);
+    setViewingChat(fullChat);
+  };
+
+  const handleUpdateChatTitle = async (title: string) => {
+    if (viewingChat) {
+      const updatedChat = await updateChat(viewingChat.id, {
+        title,
+        messages: viewingChat.messages.map((m) => ({
+          question: m.question,
+          answer: m.answer,
+          citations: m.citations,
+        })),
+      });
+      setViewingChat(updatedChat);
+      // Refresh list if dataset is selected
+      if (selectedDataset) {
+        fetchChats(selectedDataset);
+      }
+    }
+  };
+
+  const handleDownloadChat = async (chat: SavedChatListItem | SavedChat) => {
+    await downloadChat(chat.id, `${chat.title}.md`);
+  };
+
+  const handleDeleteChat = async () => {
+    if (deletingChat) {
+      await deleteChat(deletingChat.id);
+      setDeletingChat(null);
+    }
+  };
+
+  const handleCloseViewModal = () => {
+    setViewingChat(null);
+    setCurrentChat(null);
+  };
+
   const selectedDatasetName = selectedDataset
     ? datasets.find((d) => d.id === selectedDataset)?.title
     : null;
@@ -90,10 +196,36 @@ export const ChatInterface: FC<ChatInterfaceProps> = ({
         {/* Fixed header with selected dataset - positioned absolutely inside messages area */}
         {selectedDataset && (
           <div className="absolute top-0 left-0 right-0 bg-gray-50 p-3.5 z-10 border-b border-gray-200">
-            <div className="inline-flex items-center px-3 py-1.5 rounded-full bg-purple-100 border border-purple-200 ml-6">
-              <span className="text-sm text-purple-700 font-medium">
-                Поиск в: {selectedDatasetName}
-              </span>
+            <div className="flex items-center justify-between px-6">
+              <div className="inline-flex items-center px-3 py-1.5 rounded-full bg-purple-100 border border-purple-200">
+                <span className="text-sm text-purple-700 font-medium">
+                  Поиск в: {selectedDatasetName}
+                </span>
+              </div>
+              {canSaveChats && (
+                <div className="flex items-center space-x-2">
+                  {messages.length > 0 && (
+                    <button
+                      onClick={() => setIsSaveModalOpen(true)}
+                      className="inline-flex items-center px-3 py-1.5 text-sm font-medium text-purple-700 bg-purple-50 border border-purple-200 rounded-full hover:bg-purple-100 transition-colors"
+                    >
+                      <svg className="w-4 h-4 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-3m-1 4l-3 3m0 0l-3-3m3 3V4" />
+                      </svg>
+                      Сохранить
+                    </button>
+                  )}
+                  <button
+                    onClick={handleOpenSavedChats}
+                    className="inline-flex items-center px-3 py-1.5 text-sm font-medium text-gray-600 bg-white border border-gray-200 rounded-full hover:bg-gray-50 transition-colors"
+                  >
+                    <svg className="w-4 h-4 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                    История
+                  </button>
+                </div>
+              )}
             </div>
           </div>
         )}
@@ -249,6 +381,43 @@ export const ChatInterface: FC<ChatInterfaceProps> = ({
           </div>
         </div>
       </div>
+
+      {/* Saved Chats Modals */}
+      <SaveChatModal
+        isOpen={isSaveModalOpen}
+        onClose={() => setIsSaveModalOpen(false)}
+        onSave={handleSaveChat}
+        isSaving={isSaving}
+      />
+
+      <SavedChatsList
+        isOpen={isSavedChatsOpen}
+        chats={chats}
+        isLoading={isLoadingChats}
+        onClose={() => setIsSavedChatsOpen(false)}
+        onView={handleViewChat}
+        onDownload={handleDownloadChat}
+        onDelete={(chat) => setDeletingChat(chat)}
+      />
+
+      <SavedChatViewModal
+        chat={viewingChat}
+        isOpen={!!viewingChat}
+        isLoading={isLoadingChats}
+        isSaving={isSaving}
+        onClose={handleCloseViewModal}
+        onSave={handleUpdateChatTitle}
+        onDownload={() => viewingChat && handleDownloadChat(viewingChat)}
+      />
+
+      <ConfirmDeleteModal
+        isOpen={!!deletingChat}
+        title="Удалить чат?"
+        message={`Вы уверены, что хотите удалить чат "${deletingChat?.title}"? Это действие нельзя отменить.`}
+        isDeleting={isDeleting}
+        onConfirm={handleDeleteChat}
+        onCancel={() => setDeletingChat(null)}
+      />
     </div>
   );
 };
