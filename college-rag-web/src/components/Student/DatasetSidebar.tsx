@@ -16,6 +16,12 @@ export const DatasetSidebar: FC<DatasetSidebarProps> = ({
   isLoading = false,
   error = null,
 }) => {
+  const formatStudentName = (firstName?: string, lastName?: string): string | null => {
+    if (!firstName || !lastName) return null;
+    const firstInitial = firstName.charAt(0).toUpperCase();
+    return `${firstInitial}. ${lastName}`;
+  };
+
   return (
     <aside className="w-80 bg-white border-r border-gray-200 flex flex-col">
       {/* Header */}
@@ -111,18 +117,14 @@ export const DatasetSidebar: FC<DatasetSidebarProps> = ({
                     {dataset.title}
                   </h3>
                   <div className="flex items-center mt-1 space-x-2">
+                    {formatStudentName(dataset.student_first_name, dataset.student_last_name) && (
+                      <span className="text-xs text-gray-600 font-medium">
+                        {formatStudentName(dataset.student_first_name, dataset.student_last_name)}
+                      </span>
+                    )}
                     <span className="text-xs text-gray-500">
                       {new Date(dataset.created_at).toLocaleDateString("ru-RU")}
                     </span>
-                    {dataset.indexed_at ? (
-                      <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-green-100 text-green-800">
-                        Индексирован
-                      </span>
-                    ) : (
-                      <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-yellow-100 text-yellow-800">
-                        Не индексирован
-                      </span>
-                    )}
                   </div>
                 </div>
               </div>
