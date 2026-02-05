@@ -23,7 +23,7 @@ export const useTopicStore = create<TopicStore>((set) => ({
     set({ isLoading: true, error: null });
     try {
       const response = await topicService.getAssignedTopics();
-      set({ topics: response.assignments, isLoading: false });
+      set({ topics: response.assignments ?? [], isLoading: false });
     } catch (error: any) {
       const errorMessage = error.response?.data?.error || 'Не удалось загрузить темы';
       set({ error: errorMessage, isLoading: false });
