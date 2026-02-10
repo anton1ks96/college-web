@@ -116,6 +116,11 @@ export const DatasetSidebar: FC<DatasetSidebarProps> = ({
                   }`}>
                     {dataset.title}
                   </h3>
+                  {dataset.author && (
+                    <p className="text-xs text-gray-500 mt-0.5 truncate">
+                      {dataset.author}
+                    </p>
+                  )}
                   <div className="flex items-center mt-1 space-x-2">
                     {formatStudentName(dataset.student_first_name, dataset.student_last_name) && (
                       <span className="text-xs text-gray-600 font-medium">
