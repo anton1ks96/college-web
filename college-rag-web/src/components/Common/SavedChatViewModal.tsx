@@ -24,6 +24,7 @@ const formatDate = (dateString: string): string => {
 };
 
 const extractThinkContent = (text: string) => {
+  if (!text) return { visibleText: "", hiddenText: null };
   const thinkMatch = text.match(/<think>([\s\S]*?)<\/think>/i);
   const hiddenText = thinkMatch ? thinkMatch[1].trim() : null;
   const visibleText = thinkMatch ? text.replace(thinkMatch[0], "").trim() : text;
