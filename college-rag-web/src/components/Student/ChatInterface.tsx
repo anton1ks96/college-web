@@ -1,5 +1,5 @@
 import type {FC} from "react";
-import {useState} from "react";
+import {useEffect, useRef, useState} from "react";
 import type {Dataset} from "../../types/dataset.types";
 import {chatApi} from "../../services/chatApi";
 import type {Citation} from "../../types/chat";
@@ -22,6 +22,7 @@ interface Message {
   sender: "user" | "assistant";
   timestamp: Date;
   citations?: Citation[];
+  thinking?: string;
   error?: string;
 }
 
@@ -66,6 +67,14 @@ export const ChatInterface: FC<ChatInterfaceProps> = ({
     return {visibleText, hiddenText};
   };
 
+  const streamTextRef = useRef("");
+  const thinkingTextRef = useRef("");
+  const messagesEndRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    messagesEndRef.current?.scrollIntoView({behavior: "smooth"});
+  }, [messages]);
+
   const handleSendMessage = async () => {
     if (!inputValue.trim() || !selectedDataset) return;
 
@@ -76,37 +85,62 @@ export const ChatInterface: FC<ChatInterfaceProps> = ({
       timestamp: new Date(),
     };
 
-    setMessages((prev) => [...prev, userMessage]);
+    const assistantId = (Date.now() + 1).toString();
+    const assistantMessage: Message = {
+      id: assistantId,
+      text: "",
+      sender: "assistant",
+      timestamp: new Date(),
+    };
+
+    setMessages((prev) => [...prev, userMessage, assistantMessage]);
     const questionText = inputValue;
     setInputValue("");
     setIsLoading(true);
     setError(null);
+    streamTextRef.current = "";
+    thinkingTextRef.current = "";
 
     try {
-      const response = await chatApi.askQuestion(selectedDataset, questionText);
-
-      const assistantMessage: Message = {
-        id: (Date.now() + 1).toString(),
-        text: response.answer,
-        sender: "assistant",
-        timestamp: new Date(),
-        citations: response.citations,
-      };
-
-      setMessages((prev) => [...prev, assistantMessage]);
+      await chatApi.askQuestion(selectedDataset, questionText, {
+        onThinking(token) {
+          thinkingTextRef.current += token;
+          const thinking = thinkingTextRef.current;
+          setMessages((prev) =>
+            prev.map((m) => (m.id === assistantId ? {...m, thinking} : m)),
+          );
+        },
+        onDelta(token) {
+          streamTextRef.current += token;
+          const text = streamTextRef.current;
+          setMessages((prev) =>
+            prev.map((m) => (m.id === assistantId ? {...m, text} : m)),
+          );
+        },
+        onCitations(citations) {
+          setMessages((prev) =>
+            prev.map((m) => (m.id === assistantId ? {...m, citations} : m)),
+          );
+        },
+        onDone() {},
+        onError(err) {
+          setError(err.message);
+        },
+      });
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : "Произошла неизвестная ошибка";
       setError(errorMessage);
-
-      const assistantMessage: Message = {
-        id: (Date.now() + 1).toString(),
-        text: "Извините, произошла ошибка при обработке вашего запроса.",
-        sender: "assistant",
-        timestamp: new Date(),
-        error: errorMessage,
-      };
-
-      setMessages((prev) => [...prev, assistantMessage]);
+      setMessages((prev) =>
+        prev.map((m) =>
+          m.id === assistantId
+            ? {
+                ...m,
+                text: m.text || "Извините, произошла ошибка при обработке вашего запроса.",
+                error: errorMessage,
+              }
+            : m,
+        ),
+      );
     } finally {
       setIsLoading(false);
     }
@@ -257,20 +291,19 @@ export const ChatInterface: FC<ChatInterfaceProps> = ({
                     const {visibleText, hiddenText} = extractThinkContent(
                       message.text,
                     );
+                    const thinkingContent = message.thinking || hiddenText;
                     return (
                       <>
-                        {visibleText && (
-                          <p className="text-sm whitespace-pre-wrap">{visibleText}</p>
-                        )}
-                        {hiddenText && (
-                          <details className="mt-3 rounded-lg border border-dashed border-gray-300 bg-gray-50 px-3 py-2 text-sm text-gray-700">
+                        {thinkingContent && (
+                          <details open className="mb-1 rounded-lg border border-dashed border-gray-300 bg-gray-50 px-3 py-2 text-sm text-gray-700">
                             <summary className="cursor-pointer select-none text-xs font-semibold uppercase tracking-wide text-gray-500">
                               Рассуждения
                             </summary>
-                            <pre className="mt-2 whitespace-pre-wrap text-xs text-gray-600">
-                              {hiddenText}
-                            </pre>
+                            <pre className="mt-1 mb-0 whitespace-pre-wrap text-xs text-gray-600">{thinkingContent}</pre>
                           </details>
+                        )}
+                        {visibleText.trim() && (
+                          <div className="text-sm whitespace-pre-wrap">{visibleText.trim()}</div>
                         )}
                       </>
                     );
@@ -321,6 +354,7 @@ export const ChatInterface: FC<ChatInterfaceProps> = ({
                 </div>
               </div>
             )}
+            <div ref={messagesEndRef} />
           </div>
         )}
       </div>

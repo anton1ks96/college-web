@@ -18,3 +18,10 @@ export interface ChatError {
   message: string;
   status?: number;
 }
+
+// SSE event types
+export type AskEvent =
+  | { type: "thinking"; delta: string }
+  | { type: "delta"; delta: string }
+  | { type: "citations"; citations: Citation[] }
+  | { type: "done" };
