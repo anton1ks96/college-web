@@ -126,6 +126,13 @@ export const ChatInterface: FC<ChatInterfaceProps> = ({
         onDone() {},
         onError(err) {
           setError(err.message);
+          setMessages((prev) =>
+            prev.map((m) =>
+              m.id === assistantId
+                ? { ...m, text: m.text || err.message, error: err.message }
+                : m,
+            ),
+          );
         },
       });
     } catch (error) {

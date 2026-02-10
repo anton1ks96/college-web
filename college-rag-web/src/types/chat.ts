@@ -24,4 +24,5 @@ export type AskEvent =
   | { type: "thinking"; delta: string }
   | { type: "delta"; delta: string }
   | { type: "citations"; citations: Citation[] }
-  | { type: "done" };
+  | { type: "done" }
+  | { type: "error"; error: string };

@@ -2,6 +2,17 @@ import type {AskEvent, Citation} from "../types/chat";
 import {coreAPI} from "../api/client";
 import {getAccessToken} from "../utils/cookies";
 
+const ERROR_MESSAGES: Record<string, string> = {
+  "no relevant content found": "По вашему запросу не найдено релевантной информации в датасете. Попробуйте переформулировать вопрос.",
+  "failed to embed question": "Не удалось обработать ваш вопрос. Попробуйте позже.",
+  "failed to search vectors": "Ошибка поиска по базе знаний. Попробуйте позже.",
+  "failed to rerank": "Ошибка ранжирования результатов. Попробуйте позже.",
+};
+
+function formatError(error: string): string {
+  return ERROR_MESSAGES[error] || error;
+}
+
 export interface StreamCallbacks {
   onThinking: (token: string) => void;
   onDelta: (token: string) => void;
@@ -74,6 +85,9 @@ export const chatApi = {
                   break;
                 case "done":
                   callbacks.onDone();
+                  break;
+                case "error":
+                  callbacks.onError(new Error(formatError(event.error)));
                   break;
               }
             } catch {
