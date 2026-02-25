@@ -2,6 +2,7 @@ import type {FC, ReactNode} from "react";
 import {useEffect, useRef, useState} from "react";
 import {useLocation, useNavigate} from "react-router-dom";
 import {useAuthStore} from "../../stores/useAuthStore";
+import {Footer} from "../Common/Footer";
 
 interface StudentLayoutProps {
   children: ReactNode;
@@ -12,6 +13,7 @@ export const StudentLayout: FC<StudentLayoutProps> = ({ children }) => {
   const navigate = useNavigate();
   const location = useLocation();
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
 
   // Закрытие dropdown при клике вне его
@@ -25,6 +27,11 @@ export const StudentLayout: FC<StudentLayoutProps> = ({ children }) => {
     document.addEventListener('mousedown', handleClickOutside);
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
+
+  // Закрытие мобильного меню при смене маршрута
+  useEffect(() => {
+    setIsMobileMenuOpen(false);
+  }, [location.pathname]);
 
   const handleLogout = async () => {
     setIsDropdownOpen(false);
@@ -43,11 +50,28 @@ export const StudentLayout: FC<StudentLayoutProps> = ({ children }) => {
         <div className="px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center py-2">
             {/* Left side - Logo and Navigation */}
-            <div className="flex items-center space-x-44">
-              <img src="/logo_light.png" alt="Колледж RAG" className="h-12" />
+            <div className="flex items-center space-x-4 md:space-x-12 lg:space-x-44">
+              <img src="/logo_light.png" alt="Колледж RAG" className="h-10 sm:h-12" />
 
-              {/* Navigation */}
-              <nav className="flex space-x-2 border border-gray-200 rounded-lg p-1 bg-white shadow-sm">
+              {/* Hamburger button - mobile only */}
+              <button
+                onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+                className="md:hidden p-2 rounded-md text-gray-600 hover:text-purple-600 hover:bg-purple-50 focus:outline-none focus:ring-2 focus:ring-purple-500"
+                aria-label="Открыть меню"
+              >
+                {isMobileMenuOpen ? (
+                  <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                  </svg>
+                ) : (
+                  <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
+                  </svg>
+                )}
+              </button>
+
+              {/* Navigation - desktop only */}
+              <nav className="hidden md:flex space-x-2 border border-gray-200 rounded-lg p-1 bg-white shadow-sm">
                 <button
                   onClick={() => navigate("/dashboard/chat")}
                   className={`px-4 py-2 rounded-md font-medium transition-colors duration-200 focus:outline-none ${
@@ -81,8 +105,8 @@ export const StudentLayout: FC<StudentLayoutProps> = ({ children }) => {
               </nav>
             </div>
 
-            {/* Right side - User Profile Dropdown */}
-            <div className="flex justify-end mr-4">
+            {/* Right side - User Profile Dropdown (desktop only) */}
+            <div className="hidden md:flex justify-end mr-4">
               {user && (
                 <div className="relative" ref={dropdownRef}>
                   {/* User Profile Button */}
@@ -137,19 +161,79 @@ export const StudentLayout: FC<StudentLayoutProps> = ({ children }) => {
             </div>
           </div>
         </div>
+
+        {/* Mobile menu panel with animation */}
+        <div
+          className={`md:hidden border-t border-gray-200 bg-white overflow-hidden transition-all duration-300 ease-in-out ${
+            isMobileMenuOpen ? "max-h-96 opacity-100" : "max-h-0 opacity-0 border-t-transparent"
+          }`}
+        >
+          <div className="px-4 py-3 space-y-3">
+            <nav className="flex flex-col space-y-1">
+              <button
+                onClick={() => navigate("/dashboard/chat")}
+                className={`w-full text-left px-4 py-3 rounded-md font-medium transition-colors duration-200 focus:outline-none ${
+                  isActive("/dashboard/chat")
+                    ? "text-purple-600 bg-purple-50 border border-purple-200"
+                    : "text-gray-600 hover:text-purple-600 hover:bg-purple-50/50 border border-transparent"
+                }`}
+              >
+                Чат
+              </button>
+              <button
+                onClick={() => navigate("/dashboard/topics")}
+                className={`w-full text-left px-4 py-3 rounded-md font-medium transition-colors duration-200 focus:outline-none ${
+                  isActive("/dashboard/topics")
+                    ? "text-purple-600 bg-purple-50 border border-purple-200"
+                    : "text-gray-600 hover:text-purple-600 hover:bg-purple-50/50 border border-transparent"
+                }`}
+              >
+                Темы
+              </button>
+              <button
+                onClick={() => navigate("/dashboard/datasets")}
+                className={`w-full text-left px-4 py-3 rounded-md font-medium transition-colors duration-200 focus:outline-none ${
+                  isActive("/dashboard/datasets")
+                    ? "text-purple-600 bg-purple-50 border border-purple-200"
+                    : "text-gray-600 hover:text-purple-600 hover:bg-purple-50/50 border border-transparent"
+                }`}
+              >
+                Датасеты
+              </button>
+            </nav>
+
+            {user && (
+              <div className="border-t border-gray-200 pt-3">
+                <div className="flex items-center space-x-3 px-4 py-2">
+                  <div className="w-10 h-10 bg-purple-50 border border-purple-200 rounded-full flex items-center justify-center shadow-sm">
+                    <svg className="w-5 h-5 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                    </svg>
+                  </div>
+                  <div className="flex flex-col">
+                    <span className="text-base font-semibold text-gray-900">{user.username}</span>
+                    <span className="text-sm text-gray-600">Студент</span>
+                  </div>
+                </div>
+                <button
+                  onClick={handleLogout}
+                  className="w-full flex items-center space-x-3 px-4 py-3 text-sm text-gray-700 hover:bg-red-50 hover:text-red-700 rounded-md transition-colors mt-1"
+                >
+                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+                  </svg>
+                  <span>Выйти из системы</span>
+                </button>
+              </div>
+            )}
+          </div>
+        </div>
       </header>
 
       {/* Main Content */}
       <main className="flex-1 flex overflow-hidden min-h-0">{children}</main>
 
-      {/* Footer */}
-      <footer className="bg-white border-t flex-shrink-0">
-        <div className="px-4 sm:px-6 lg:px-8 py-3">
-          <p className="text-center text-sm text-gray-400">
-            © 2021-2025 АНПОО "Колледж Цифровых Технологий" • Авторы студенты 2 курса: Иван Коломацкий, Артем Джапаридзе
-          </p>
-        </div>
-      </footer>
+      <Footer />
     </div>
   );
 };

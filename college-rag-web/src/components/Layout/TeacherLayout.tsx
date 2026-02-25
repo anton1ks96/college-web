@@ -2,6 +2,7 @@ import type {FC, ReactNode} from "react";
 import {useEffect, useRef, useState} from "react";
 import {useLocation, useNavigate} from "react-router-dom";
 import {useAuthStore} from "../../stores/useAuthStore";
+import {Footer} from "../Common/Footer";
 
 interface TeacherLayoutProps {
   children: ReactNode;
@@ -142,14 +143,7 @@ export const TeacherLayout: FC<TeacherLayoutProps> = ({ children }) => {
       {/* Main Content */}
       <main className="flex-1 flex overflow-hidden min-h-0">{children}</main>
 
-      {/* Footer */}
-      <footer className="bg-white border-t flex-shrink-0">
-        <div className="px-4 sm:px-6 lg:px-8 py-2">
-          <p className="text-center text-sm text-gray-400">
-            © 2021-2025 АНПОО "Колледж Цифровых Технологий" • Авторы студенты 2 курса: Иван Коломацкий, Артем Джапаридзе
-          </p>
-        </div>
-      </footer>
+      <Footer />
     </div>
   );
 };

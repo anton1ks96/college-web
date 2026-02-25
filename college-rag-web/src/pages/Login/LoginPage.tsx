@@ -3,6 +3,7 @@ import {useForm} from "react-hook-form";
 import {useNavigate} from "react-router-dom";
 import {useAuthStore} from "../../stores/useAuthStore";
 import type {LoginFormData} from "../../types";
+import {Footer} from "../../components/Common/Footer";
 
 const LoginPage: React.FC = () => {
     const navigate = useNavigate();
@@ -180,12 +181,7 @@ const LoginPage: React.FC = () => {
                         </div>
                     </div>
 
-                    {/* Футер прижат к низу с отступом как у фотографии */}
-                    <footer className="text-center">
-                        <p className="text-sm" style={{ color: "rgba(0, 0, 0, 0.6)" }}>
-                            © 2025 Колледж Цифровых Технологий
-                        </p>
-                    </footer>
+                    <Footer />
                 </div>
             </div>
         </div>

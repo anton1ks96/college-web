@@ -23,7 +23,7 @@ export const DatasetSidebar: FC<DatasetSidebarProps> = ({
   };
 
   return (
-    <aside className="w-80 bg-white border-r border-gray-200 flex flex-col">
+    <aside className="w-80 max-w-full bg-white border-r border-gray-200 flex flex-col h-full">
       {/* Header */}
       <div className="p-4 border-b border-gray-200">
         <h2 className="text-lg font-semibold text-gray-900">Мои датасеты</h2>

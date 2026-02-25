@@ -17,7 +17,7 @@ export const DatasetsPage: FC = () => {
 
   return (
     <div className="flex-1 bg-gray-50">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-8">
         {/* Header */}
         <div className="mb-8">
           <h1 className="text-2xl font-bold text-gray-900">Мои датасеты</h1>
@@ -27,7 +27,7 @@ export const DatasetsPage: FC = () => {
         </div>
 
         {/* Actions bar */}
-        <div className="mb-6 flex justify-between items-center">
+        <div className="mb-6 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
           <div className="flex space-x-4">
             <button
               onClick={() => setIsCreateModalOpen(true)}

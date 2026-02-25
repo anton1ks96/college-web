@@ -29,8 +29,8 @@ export const TopicsPage: FC = () => {
     <StudentLayout>
       <div className="flex-1 overflow-hidden">
         <div className="h-full flex flex-col">
-          <div className="flex-shrink-0 bg-white shadow-sm border-b px-6 py-4">
-            <div className="flex items-center justify-between">
+          <div className="flex-shrink-0 bg-white shadow-sm border-b px-4 sm:px-6 py-3 sm:py-4">
+            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
               <div>
                 <h2 className="text-2xl font-bold text-gray-900">Мои темы</h2>
                 <p className="mt-1 text-sm text-gray-600">
@@ -60,7 +60,7 @@ export const TopicsPage: FC = () => {
             </div>
           </div>
 
-          <div className="flex-1 overflow-auto bg-gray-50 p-6">
+          <div className="flex-1 overflow-auto bg-gray-50 p-4 sm:p-6">
             {error && (
               <div className="mb-4 bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg flex items-center justify-between">
                 <span>{error}</span>

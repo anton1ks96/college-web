@@ -14,6 +14,7 @@ import {ConfirmDeleteModal} from "../Common/ConfirmDeleteModal";
 interface ChatInterfaceProps {
   selectedDataset: string | null;
   datasets: Dataset[];
+  onToggleSidebar?: () => void;
 }
 
 interface Message {
@@ -29,6 +30,7 @@ interface Message {
 export const ChatInterface: FC<ChatInterfaceProps> = ({
   selectedDataset,
   datasets,
+  onToggleSidebar,
 }) => {
   const [messages, setMessages] = useState<Message[]>([]);
   const [inputValue, setInputValue] = useState("");
@@ -233,12 +235,25 @@ export const ChatInterface: FC<ChatInterfaceProps> = ({
 
   return (
     <div className="flex-1 flex flex-col bg-gray-50 h-full relative">
+      {/* Mobile sidebar toggle button */}
+      {onToggleSidebar && (
+        <button
+          onClick={onToggleSidebar}
+          className="md:hidden absolute top-3 left-3 z-20 p-2 bg-white border border-gray-200 rounded-lg shadow-sm hover:bg-purple-50 transition-colors"
+          aria-label="Открыть список датасетов"
+        >
+          <svg className="w-5 h-5 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h8m-8 6h16" />
+          </svg>
+        </button>
+      )}
+
       {/* Messages area - full height with overlay header */}
-      <div className="flex-1 overflow-y-auto px-6 py-4 min-h-0">
+      <div className="flex-1 overflow-y-auto px-3 sm:px-6 py-4 min-h-0">
         {/* Fixed header with selected dataset - positioned absolutely inside messages area */}
         {selectedDataset && (
           <div className="absolute top-0 left-0 right-0 bg-gray-50 p-3.5 z-10 border-b border-gray-200">
-            <div className="flex items-center justify-between px-6">
+            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between pl-12 pr-3 sm:px-6 gap-2">
               <div className="inline-flex items-center px-3 py-1.5 rounded-full bg-purple-100 border border-purple-200">
                 <span className="text-sm text-purple-700 font-medium">
                   Поиск в: {selectedDatasetName}
@@ -275,19 +290,26 @@ export const ChatInterface: FC<ChatInterfaceProps> = ({
           <div className="flex flex-col items-center justify-center h-full text-gray-500">
             <p className="text-xm text-center max-w-md min-h-[3rem] flex items-center justify-center">
               {!selectedDataset
-                ? "Выберите датасет слева для начала работы"
+                ? (
+                  <>
+                    <span className="hidden md:inline">Выберите датасет слева для начала работы</span>
+                    <span className="md:hidden">Нажмите ☰ чтобы выбрать датасет</span>
+                  </>
+                )
                 : "Задайте вопрос, и я найду ответ в выбранном датасете"}
             </p>
           </div>
         ) : (
           <div className="space-y-4 max-w-4xl mx-auto" style={{ paddingTop: selectedDataset ? '4rem' : '0' }}>
-            {messages.map((message) => (
+            {messages.map((message) => {
+              const isEmpty = message.sender === "assistant" && !message.text && !message.thinking && !message.error;
+              return (
               <div
                 key={message.id}
                 className={`flex ${message.sender === "user" ? "justify-end" : "justify-start"}`}
               >
                 <div
-                  className={`max-w-2xl px-4 py-2 rounded-lg ${
+                  className={`max-w-[85vw] sm:max-w-2xl px-3 sm:px-4 py-2 rounded-lg ${
                     message.sender === "user"
                       ? "bg-purple-600 text-white"
                       : message.error
@@ -295,7 +317,16 @@ export const ChatInterface: FC<ChatInterfaceProps> = ({
                       : "bg-white border border-gray-200 text-gray-900"
                   }`}
                 >
-                  {(() => {
+                  {/* Loading dots when assistant has no content yet */}
+                  {isEmpty && isLoading && (
+                    <div className="flex space-x-2 py-1">
+                      <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: "0ms" }} />
+                      <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: "150ms" }} />
+                      <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: "300ms" }} />
+                    </div>
+                  )}
+
+                  {!isEmpty && (() => {
                     const {visibleText, hiddenText} = extractThinkContent(
                       message.text,
                     );
@@ -324,7 +355,7 @@ export const ChatInterface: FC<ChatInterfaceProps> = ({
                     </div>
                   )}
 
-
+                  {!isEmpty && (
                   <p
                     className={`text-xs mt-1 ${
                       message.sender === "user"
@@ -339,36 +370,18 @@ export const ChatInterface: FC<ChatInterfaceProps> = ({
                       minute: "2-digit",
                     })}
                   </p>
+                  )}
                 </div>
               </div>
-            ))}
-            {isLoading && (
-              <div className="flex justify-start">
-                <div className="bg-white border border-gray-200 px-4 py-2 rounded-lg">
-                  <div className="flex space-x-2">
-                    <div
-                      className="w-2 h-2 bg-gray-400 rounded-full animate-bounce"
-                      style={{ animationDelay: "0ms" }}
-                    ></div>
-                    <div
-                      className="w-2 h-2 bg-gray-400 rounded-full animate-bounce"
-                      style={{ animationDelay: "150ms" }}
-                    ></div>
-                    <div
-                      className="w-2 h-2 bg-gray-400 rounded-full animate-bounce"
-                      style={{ animationDelay: "300ms" }}
-                    ></div>
-                  </div>
-                </div>
-              </div>
-            )}
+              );
+            })}
             <div ref={messagesEndRef} />
           </div>
         )}
       </div>
 
       {/* Input area */}
-      <div className="px-6 py-4 flex-shrink-0">
+      <div className="px-3 sm:px-6 py-3 sm:py-4 flex-shrink-0">
         {/* Отображение общей ошибки */}
         {error && (
           <div className="mb-4 max-w-4xl mx-auto">
@@ -397,7 +410,7 @@ export const ChatInterface: FC<ChatInterfaceProps> = ({
           </div>
         )}
         <div className="relative max-w-4xl mx-auto">
-          <div className="bg-white rounded-full shadow-lg shadow-purple-300/50 border border-gray-200 flex items-center px-6 py-3">
+          <div className="bg-white rounded-full shadow-lg shadow-purple-300/50 border border-gray-200 flex items-center px-3 sm:px-6 py-2 sm:py-3">
             <input
               type="text"
               value={inputValue}

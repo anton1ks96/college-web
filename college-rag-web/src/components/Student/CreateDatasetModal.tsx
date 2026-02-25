@@ -117,7 +117,7 @@ export const CreateDatasetModal: FC<CreateDatasetModalProps> = ({
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
-      <div className="bg-white rounded-xl shadow-xl max-w-6xl w-full h-[90vh] flex flex-col">
+      <div className="bg-white rounded-xl shadow-xl max-w-6xl w-full h-[95vh] sm:h-[90vh] flex flex-col">
         {/* Header */}
         <div className="px-6 py-4 border-b border-gray-200 flex-shrink-0">
           <div className="flex items-center justify-between">
@@ -248,11 +248,11 @@ export const CreateDatasetModal: FC<CreateDatasetModalProps> = ({
                           <button
                             type="button"
                             onClick={() => handleAddChunk(index)}
-                            className="inline-flex h-9 items-center rounded-full border border-gray-200 bg-white px-4 text-xs font-semibold text-gray-700 transition hover:border-gray-300 hover:bg-gray-50 disabled:opacity-40"
+                            className="inline-flex h-9 items-center rounded-full border border-gray-200 bg-white px-2 sm:px-4 text-xs font-semibold text-gray-700 transition hover:border-gray-300 hover:bg-gray-50 disabled:opacity-40"
                             disabled={isLoading}
                           >
-                            <span className="mr-2 text-lg leading-none">+</span>
-                            Добавить чанк
+                            <span className="mr-0 sm:mr-2 text-lg leading-none">+</span>
+                            <span className="hidden sm:inline">Добавить чанк</span>
                           </button>
                           <button
                             type="button"
@@ -349,11 +349,11 @@ export const CreateDatasetModal: FC<CreateDatasetModalProps> = ({
         </div>
 
         {/* Footer */}
-        <div className="px-6 py-4 border-t border-gray-200 flex justify-between items-center flex-shrink-0">
-          <div className="text-sm text-gray-500">
+        <div className="px-4 sm:px-6 py-3 sm:py-4 border-t border-gray-200 flex flex-col sm:flex-row justify-between items-stretch sm:items-center gap-3 flex-shrink-0">
+          <div className="text-xs sm:text-sm text-gray-500 hidden sm:block">
             Совет: разбивайте контент на небольшие осмысленные блоки
           </div>
-          <div className="flex space-x-3">
+          <div className="flex space-x-3 justify-end">
             <button
               onClick={handleClose}
               className="px-4 py-2 rounded-md font-medium text-sm transition-colors duration-200 focus:outline-none text-gray-600 bg-white border border-gray-200 hover:text-gray-900 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"

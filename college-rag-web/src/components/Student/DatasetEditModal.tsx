@@ -352,10 +352,10 @@ export const DatasetEditModal: FC<DatasetEditModalProps> = ({
                                                             type="button"
                                                             onClick={() => handleAddChunk(index)}
                                                             disabled={disabled}
-                                                            className="inline-flex h-9 items-center rounded-full border border-gray-200 bg-white px-4 text-xs font-semibold text-gray-700 transition hover:border-gray-300 hover:bg-gray-50 disabled:opacity-40"
+                                                            className="inline-flex h-9 items-center rounded-full border border-gray-200 bg-white px-2 sm:px-4 text-xs font-semibold text-gray-700 transition hover:border-gray-300 hover:bg-gray-50 disabled:opacity-40"
                                                         >
-                                                            <span className="mr-2 text-lg leading-none">+</span>
-                                                            Добавить чанк
+                                                            <span className="mr-0 sm:mr-2 text-lg leading-none">+</span>
+                                                            <span className="hidden sm:inline">Добавить чанк</span>
                                                         </button>
                                                         <button
                                                             type="button"
@@ -462,7 +462,7 @@ export const DatasetEditModal: FC<DatasetEditModalProps> = ({
                 </div>
 
                 {/* Footer */}
-                <div className="flex items-center justify-between pt-4 border-t border-gray-200 mt-6">
+                <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 pt-4 border-t border-gray-200 mt-6">
                     <div className="flex space-x-3">
                         {needsReindexing && !hasChanges && (
                             <button
@@ -491,7 +491,7 @@ export const DatasetEditModal: FC<DatasetEditModalProps> = ({
                         )}
                     </div>
 
-                    <div className="flex space-x-3">
+                    <div className="flex flex-wrap justify-end gap-2 sm:gap-3">
                         <button
                             onClick={handleCancel}
                             className="px-4 py-2 rounded-md font-medium text-sm transition-colors duration-200 focus:outline-none text-gray-600 bg-white border border-gray-200 hover:text-gray-900 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
@@ -528,7 +528,8 @@ export const DatasetEditModal: FC<DatasetEditModalProps> = ({
                                     <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-3m-1 4l-3 3m0 0l-3-3m3 3V2" />
                                     </svg>
-                                    Сохранить и переиндексировать
+                                    <span className="hidden sm:inline">Сохранить и переиндексировать</span>
+                                    <span className="sm:hidden">Сохранить + индекс</span>
                                 </>
                             )}
                         </button>

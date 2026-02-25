@@ -1,6 +1,7 @@
 import type {FC, ReactNode} from "react";
 import {useNavigate} from "react-router-dom";
 import {useAuthStore} from "../../stores/useAuthStore";
+import {Footer} from "../Common/Footer";
 
 interface LayoutProps {
   children: ReactNode;
@@ -88,14 +89,7 @@ export const Layout: FC<LayoutProps> = ({ children }) => {
         {children}
       </main>
 
-      {/* Footer */}
-      <footer className="bg-white border-t mt-auto">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
-          <p className="text-center text-xs text-gray-400">
-            © 2021-2025 АНПОО "Колледж Цифровых Технологий" • Авторы студенты 2 курса: Иван Коломацкий, Артем Джапаридзе
-          </p>
-        </div>
-      </footer>
+      <Footer />
     </div>
   );
 };
