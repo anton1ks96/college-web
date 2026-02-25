@@ -70,7 +70,7 @@ export const DatasetGrid: FC<DatasetGridProps> = ({ datasets, onDatasetUpdated }
             </div>
 
             {/* Status badge */}
-            <div className="mb-4">
+            <div className="mb-4 flex flex-wrap gap-2">
               {dataset.indexed_at ? (
                 <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800">
                   ✓ Индексирован
@@ -78,6 +78,11 @@ export const DatasetGrid: FC<DatasetGridProps> = ({ datasets, onDatasetUpdated }
               ) : (
                 <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800">
                   ⏳ Ожидает индексации
+                </span>
+              )}
+              {dataset.tag && (
+                <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
+                  {dataset.tag}
                 </span>
               )}
             </div>

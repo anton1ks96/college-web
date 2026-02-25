@@ -95,6 +95,18 @@ export const DatasetModal: FC<DatasetModalProps> = ({
                         <span className="font-medium text-gray-600">ID:</span>
                         <p className="text-gray-900 font-mono text-xs">{dataset.id}</p>
                       </div>
+                      <div>
+                        <span className="font-medium text-gray-600">Тег:</span>
+                        <p className="text-gray-900">
+                          {dataset.tag ? (
+                            <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
+                              {dataset.tag}
+                            </span>
+                          ) : (
+                            <span className="text-gray-400">Нет тега</span>
+                          )}
+                        </p>
+                      </div>
                     </div>
                   </div>
                   {dataset.content ? (

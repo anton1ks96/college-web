@@ -6,6 +6,9 @@ import {ErrorAlert} from "./ErrorAlert";
 import {EmptyState} from "./EmptyState";
 import {DatasetModal} from "./DatasetModal";
 import {DatasetPermissionsModal} from "../Admin/DatasetPermissionsModal";
+import {TagBadge} from "./TagBadge";
+import {TagEditor} from "./TagEditor";
+import {TagSearchBar} from "./TagSearchBar";
 import type {Dataset} from "../../types/dataset.types";
 
 interface BaseDatasetsPageProps {
@@ -25,6 +28,11 @@ interface BaseDatasetsPageProps {
   formatDate: (dateString: string) => string;
   isAdmin?: boolean;
   additionalHeaderActions?: ReactNode;
+  onTagSearch?: (tag: string) => void;
+  onTagSearchClear?: () => void;
+  isTagSearching?: boolean;
+  onSetTag?: (datasetId: string, tag: string) => Promise<void>;
+  onRemoveTag?: (datasetId: string) => Promise<void>;
 }
 
 type ViewMode = 'cards' | 'table';
@@ -46,12 +54,18 @@ export const BaseDatasetsPage: FC<BaseDatasetsPageProps> = ({
   formatDate,
   isAdmin = false,
   additionalHeaderActions,
+  onTagSearch,
+  onTagSearchClear,
+  isTagSearching = false,
+  onSetTag,
+  onRemoveTag,
 }) => {
   const [selectedDataset, setSelectedDataset] = useState<Dataset | null>(null);
   const [isLoadingDataset, setIsLoadingDataset] = useState(false);
   const [viewMode, setViewMode] = useState<ViewMode>('cards');
   const [isPermissionsModalOpen, setIsPermissionsModalOpen] = useState(false);
   const [datasetForPermissions, setDatasetForPermissions] = useState<Dataset | null>(null);
+  const [editingTagDatasetId, setEditingTagDatasetId] = useState<string | null>(null);
 
   const handleViewDataset = async (dataset: Dataset) => {
     setIsLoadingDataset(true);
@@ -72,6 +86,19 @@ export const BaseDatasetsPage: FC<BaseDatasetsPageProps> = ({
   const handleManagePermissions = (dataset: Dataset) => {
     setDatasetForPermissions(dataset);
     setIsPermissionsModalOpen(true);
+  };
+
+  const handleSaveTag = async (datasetId: string, tag: string) => {
+    if (onSetTag) {
+      await onSetTag(datasetId, tag);
+    }
+    setEditingTagDatasetId(null);
+  };
+
+  const handleRemoveTag = async (datasetId: string) => {
+    if (onRemoveTag) {
+      await onRemoveTag(datasetId);
+    }
   };
 
   const totalPages = Math.ceil(totalDatasets / datasetsPerPage);
@@ -147,13 +174,22 @@ export const BaseDatasetsPage: FC<BaseDatasetsPageProps> = ({
                 </button>
               </div>
             </div>
-            {totalDatasets > 0 && (
-              <div className="mt-2">
+            <div className="flex items-center justify-between mt-2">
+              {totalDatasets > 0 && (
                 <span className="text-xs text-gray-500">
                   Всего датасетов: {totalDatasets}
                 </span>
-              </div>
-            )}
+              )}
+              {onTagSearch && onTagSearchClear && (
+                <div className="ml-auto">
+                  <TagSearchBar
+                    onSearch={onTagSearch}
+                    onClear={onTagSearchClear}
+                    isSearching={isTagSearching}
+                  />
+                </div>
+              )}
+            </div>
           </div>
 
           {/* Content */}
@@ -176,9 +212,26 @@ export const BaseDatasetsPage: FC<BaseDatasetsPageProps> = ({
                           <h3 className="text-lg font-semibold text-gray-900 mb-2 line-clamp-2">
                             {dataset.title}
                           </h3>
-                          <p className="text-sm text-gray-600 mb-3">
+                          <p className="text-sm text-gray-600 mb-2">
                             Студент: {dataset.author || 'Неизвестно'}
                           </p>
+                          {/* Tag */}
+                          <div className="mb-3">
+                            {editingTagDatasetId === dataset.id ? (
+                              <TagEditor
+                                initialValue={dataset.tag || ""}
+                                onSave={(tag) => handleSaveTag(dataset.id, tag)}
+                                onCancel={() => setEditingTagDatasetId(null)}
+                              />
+                            ) : (
+                              <TagBadge
+                                tag={dataset.tag}
+                                editable={!!onSetTag}
+                                onEdit={() => setEditingTagDatasetId(dataset.id)}
+                                onRemove={() => handleRemoveTag(dataset.id)}
+                              />
+                            )}
+                          </div>
                           <div className="flex flex-col space-y-2 text-xs text-gray-500 mb-4">
                             <div className="flex items-center">
                               <svg
@@ -253,6 +306,9 @@ export const BaseDatasetsPage: FC<BaseDatasetsPageProps> = ({
                             Автор
                           </th>
                           <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                            Тег
+                          </th>
+                          <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                             Создан
                           </th>
                           <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
@@ -273,6 +329,22 @@ export const BaseDatasetsPage: FC<BaseDatasetsPageProps> = ({
                             </td>
                             <td className="px-6 py-4 whitespace-nowrap">
                               <div className="text-sm text-gray-900">{dataset.author || 'Неизвестно'}</div>
+                            </td>
+                            <td className="px-6 py-4 whitespace-nowrap">
+                              {editingTagDatasetId === dataset.id ? (
+                                <TagEditor
+                                  initialValue={dataset.tag || ""}
+                                  onSave={(tag) => handleSaveTag(dataset.id, tag)}
+                                  onCancel={() => setEditingTagDatasetId(null)}
+                                />
+                              ) : (
+                                <TagBadge
+                                  tag={dataset.tag}
+                                  editable={!!onSetTag}
+                                  onEdit={() => setEditingTagDatasetId(dataset.id)}
+                                  onRemove={() => handleRemoveTag(dataset.id)}
+                                />
+                              )}
                             </td>
                             <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                               {formatDate(dataset.created_at)}

@@ -131,6 +131,11 @@ export const DatasetSidebar: FC<DatasetSidebarProps> = ({
                       {new Date(dataset.created_at).toLocaleDateString("ru-RU")}
                     </span>
                   </div>
+                  {dataset.tag && (
+                    <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800 mt-1">
+                      {dataset.tag}
+                    </span>
+                  )}
                 </div>
               </div>
             </div>

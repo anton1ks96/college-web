@@ -6,6 +6,7 @@ import {AllPermissionsModal} from "../../components/Admin/AllPermissionsModal";
 import {useAdminStore} from "../../stores/useAdminStore";
 import {datasetService} from "../../services/dataset.service";
 import {formatDate} from "../../utils/dateFormat";
+import type {Dataset} from "../../types/dataset.types";
 
 export const AdminDatasetsPage: FC = () => {
   const {
@@ -18,6 +19,10 @@ export const AdminDatasetsPage: FC = () => {
   } = useAdminStore();
 
   const [isAllPermissionsModalOpen, setIsAllPermissionsModalOpen] = useState(false);
+  const [isTagSearchActive, setIsTagSearchActive] = useState(false);
+  const [tagResults, setTagResults] = useState<Dataset[]>([]);
+  const [tagTotal, setTagTotal] = useState(0);
+  const [isTagSearching, setIsTagSearching] = useState(false);
 
   const datasetsPerPage = 12;
 
@@ -25,14 +30,50 @@ export const AdminDatasetsPage: FC = () => {
     fetchAllDatasets(1, datasetsPerPage);
   }, [fetchAllDatasets]);
 
+  const handleTagSearch = async (tag: string) => {
+    setIsTagSearching(true);
+    setIsTagSearchActive(true);
+    try {
+      const response = await datasetService.searchByTag(tag, 1, datasetsPerPage);
+      setTagResults(response.datasets || []);
+      setTagTotal(response.total || 0);
+    } finally {
+      setIsTagSearching(false);
+    }
+  };
+
+  const handleTagSearchClear = () => {
+    setIsTagSearchActive(false);
+    setTagResults([]);
+    setTagTotal(0);
+    fetchAllDatasets(currentDatasetsPage, datasetsPerPage);
+  };
+
+  const handleSetTag = async (datasetId: string, tag: string) => {
+    await datasetService.setTag(datasetId, tag);
+    const lowered = tag.toLowerCase();
+    setTagResults(prev => prev.map(d => d.id === datasetId ? { ...d, tag: lowered } : d));
+    fetchAllDatasets(currentDatasetsPage, datasetsPerPage);
+  };
+
+  const handleRemoveTag = async (datasetId: string) => {
+    await datasetService.removeTag(datasetId);
+    setTagResults(prev => prev.filter(d => d.id !== datasetId));
+    setTagTotal(prev => Math.max(0, prev - 1));
+    fetchAllDatasets(currentDatasetsPage, datasetsPerPage);
+  };
+
+  const displayedDatasets = isTagSearchActive ? tagResults : datasets;
+  const displayedTotal = isTagSearchActive ? tagTotal : totalDatasets;
+
   return (
     <>
       <BaseDatasetsPage
         Layout={AdminLayout}
         title="Все датасеты"
         subtitle="Просмотр всех датасетов в системе"
-        datasets={datasets}
-        totalDatasets={totalDatasets}
+        datasets={displayedDatasets}
+        totalDatasets={displayedTotal}
         isLoading={isLoading}
         error={error}
         fetchDatasets={fetchAllDatasets}
@@ -43,6 +84,11 @@ export const AdminDatasetsPage: FC = () => {
         emptyStateText="В системе пока нет датасетов"
         formatDate={formatDate}
         isAdmin={true}
+        onTagSearch={handleTagSearch}
+        onTagSearchClear={handleTagSearchClear}
+        isTagSearching={isTagSearching}
+        onSetTag={handleSetTag}
+        onRemoveTag={handleRemoveTag}
         additionalHeaderActions={
           <button
             onClick={() => setIsAllPermissionsModalOpen(true)}

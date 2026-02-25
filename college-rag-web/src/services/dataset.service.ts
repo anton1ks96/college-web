@@ -1,5 +1,5 @@
 import {coreAPI} from "../api/client";
-import type {CreateDatasetResponse, Dataset, DatasetListResponse,} from "../types/dataset.types";
+import type {CreateDatasetResponse, Dataset, DatasetListResponse} from "../types/dataset.types";
 
 class DatasetService {
   async createDataset(
@@ -80,6 +80,26 @@ class DatasetService {
 
   async reindexDataset(id: string): Promise<void> {
       await coreAPI.post(`/api/v1/datasets/${id}/reindex`);
+  }
+
+  async setTag(id: string, tag: string): Promise<void> {
+    await coreAPI.put(`/api/v1/datasets/${id}/tag`, { tag });
+  }
+
+  async removeTag(id: string): Promise<void> {
+    await coreAPI.delete(`/api/v1/datasets/${id}/tag`);
+  }
+
+  async searchByTag(
+    tag: string,
+    page: number = 1,
+    limit: number = 20,
+  ): Promise<DatasetListResponse> {
+    const response = await coreAPI.get<DatasetListResponse>(
+      "/api/v1/datasets/search",
+      { params: { tag, page, limit } },
+    );
+    return response.data;
   }
 }
 

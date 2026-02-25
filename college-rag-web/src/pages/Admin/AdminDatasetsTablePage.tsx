@@ -1,7 +1,12 @@
 import type {FC} from "react";
-import {useEffect} from "react";
+import {useEffect, useState} from "react";
 import {AdminLayout} from "../../components/Layout/AdminLayout";
 import {useAdminStore} from "../../stores/useAdminStore";
+import {datasetService} from "../../services/dataset.service";
+import {TagBadge} from "../../components/Common/TagBadge";
+import {TagEditor} from "../../components/Common/TagEditor";
+import {TagSearchBar} from "../../components/Common/TagSearchBar";
+import type {Dataset} from "../../types/dataset.types";
 
 export const AdminDatasetsTablePage: FC = () => {
   const {
@@ -14,6 +19,12 @@ export const AdminDatasetsTablePage: FC = () => {
     fetchAllDatasets,
     clearDatasetsError,
   } = useAdminStore();
+
+  const [editingTagDatasetId, setEditingTagDatasetId] = useState<string | null>(null);
+  const [isTagSearchActive, setIsTagSearchActive] = useState(false);
+  const [tagResults, setTagResults] = useState<Dataset[]>([]);
+  const [tagTotal, setTagTotal] = useState(0);
+  const [isTagSearching, setIsTagSearching] = useState(false);
 
   useEffect(() => {
     fetchAllDatasets();
@@ -32,6 +43,43 @@ export const AdminDatasetsTablePage: FC = () => {
       minute: '2-digit'
     });
   };
+
+  const handleSetTag = async (datasetId: string, tag: string) => {
+    await datasetService.setTag(datasetId, tag);
+    const lowered = tag.toLowerCase();
+    setEditingTagDatasetId(null);
+    setTagResults(prev => prev.map(d => d.id === datasetId ? { ...d, tag: lowered } : d));
+    fetchAllDatasets(currentDatasetsPage);
+  };
+
+  const handleRemoveTag = async (datasetId: string) => {
+    await datasetService.removeTag(datasetId);
+    setTagResults(prev => prev.filter(d => d.id !== datasetId));
+    setTagTotal(prev => Math.max(0, prev - 1));
+    fetchAllDatasets(currentDatasetsPage);
+  };
+
+  const handleTagSearch = async (tag: string) => {
+    setIsTagSearching(true);
+    setIsTagSearchActive(true);
+    try {
+      const response = await datasetService.searchByTag(tag, 1, 20);
+      setTagResults(response.datasets || []);
+      setTagTotal(response.total || 0);
+    } finally {
+      setIsTagSearching(false);
+    }
+  };
+
+  const handleTagSearchClear = () => {
+    setIsTagSearchActive(false);
+    setTagResults([]);
+    setTagTotal(0);
+    fetchAllDatasets(currentDatasetsPage);
+  };
+
+  const displayedDatasets = isTagSearchActive ? tagResults : datasets;
+  const displayedTotal = isTagSearchActive ? tagTotal : totalDatasets;
 
   return (
     <AdminLayout>
@@ -67,13 +115,20 @@ export const AdminDatasetsTablePage: FC = () => {
                 Обновить
               </button>
             </div>
-            {totalDatasets > 0 && (
-              <div className="mt-2">
+            <div className="flex items-center justify-between mt-2">
+              {displayedTotal > 0 && (
                 <span className="text-xs text-gray-500">
-                  Всего датасетов: {totalDatasets}
+                  Всего датасетов: {displayedTotal}
                 </span>
+              )}
+              <div className="ml-auto">
+                <TagSearchBar
+                  onSearch={handleTagSearch}
+                  onClear={handleTagSearchClear}
+                  isSearching={isTagSearching}
+                />
               </div>
-            )}
+            </div>
           </div>
 
           {/* Content */}
@@ -96,7 +151,7 @@ export const AdminDatasetsTablePage: FC = () => {
               <div className="flex items-center justify-center h-64">
                 <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-purple-600"></div>
               </div>
-            ) : datasets.length > 0 ? (
+            ) : displayedDatasets.length > 0 ? (
               <>
                 {/* Table */}
                 <div className="bg-white rounded-lg shadow overflow-hidden">
@@ -110,6 +165,9 @@ export const AdminDatasetsTablePage: FC = () => {
                           Автор
                         </th>
                         <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                          Тег
+                        </th>
+                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                           Создан
                         </th>
                         <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
@@ -121,7 +179,7 @@ export const AdminDatasetsTablePage: FC = () => {
                       </tr>
                     </thead>
                     <tbody className="bg-white divide-y divide-gray-200">
-                      {datasets.map((dataset) => (
+                      {displayedDatasets.map((dataset) => (
                         <tr key={dataset.id} className="hover:bg-gray-50">
                           <td className="px-6 py-4">
                             <div className="text-sm font-medium text-gray-900 max-w-md truncate">
@@ -130,6 +188,22 @@ export const AdminDatasetsTablePage: FC = () => {
                           </td>
                           <td className="px-6 py-4 whitespace-nowrap">
                             <div className="text-sm text-gray-900">{dataset.author || 'Неизвестно'}</div>
+                          </td>
+                          <td className="px-6 py-4 whitespace-nowrap">
+                            {editingTagDatasetId === dataset.id ? (
+                              <TagEditor
+                                initialValue={dataset.tag || ""}
+                                onSave={(tag) => handleSetTag(dataset.id, tag)}
+                                onCancel={() => setEditingTagDatasetId(null)}
+                              />
+                            ) : (
+                              <TagBadge
+                                tag={dataset.tag}
+                                editable
+                                onEdit={() => setEditingTagDatasetId(dataset.id)}
+                                onRemove={() => handleRemoveTag(dataset.id)}
+                              />
+                            )}
                           </td>
                           <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                             {formatDate(dataset.created_at)}
@@ -147,7 +221,7 @@ export const AdminDatasetsTablePage: FC = () => {
                 </div>
 
                 {/* Pagination */}
-                {totalDatasetsPages > 1 && (
+                {!isTagSearchActive && totalDatasetsPages > 1 && (
                   <div className="flex justify-center items-center mt-6 space-x-2">
                     <button
                       onClick={() => handlePageChange(currentDatasetsPage - 1)}

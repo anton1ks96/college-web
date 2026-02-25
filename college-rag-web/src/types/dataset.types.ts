@@ -10,6 +10,7 @@ export interface Dataset {
   indexed_at?: string | null;
   student_first_name?: string;
   student_last_name?: string;
+  tag?: string | null;
 }
 
 export interface DatasetListResponse {
