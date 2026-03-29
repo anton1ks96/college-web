@@ -16,6 +16,7 @@ export const AdminDatasetsPage: FC = () => {
     datasetsError: error,
     fetchAllDatasets,
     currentDatasetsPage,
+    deleteDataset,
   } = useAdminStore();
 
   const [isAllPermissionsModalOpen, setIsAllPermissionsModalOpen] = useState(false);
@@ -89,6 +90,7 @@ export const AdminDatasetsPage: FC = () => {
         isTagSearching={isTagSearching}
         onSetTag={handleSetTag}
         onRemoveTag={handleRemoveTag}
+        onDeleteDataset={deleteDataset}
         additionalHeaderActions={
           <button
             onClick={() => setIsAllPermissionsModalOpen(true)}

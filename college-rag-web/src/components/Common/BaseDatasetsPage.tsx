@@ -5,6 +5,7 @@ import {LoadingSpinner} from "./LoadingSpinner";
 import {ErrorAlert} from "./ErrorAlert";
 import {EmptyState} from "./EmptyState";
 import {DatasetModal} from "./DatasetModal";
+import {ConfirmDeleteModal} from "./ConfirmDeleteModal";
 import {DatasetPermissionsModal} from "../Admin/DatasetPermissionsModal";
 import {TagBadge} from "./TagBadge";
 import {TagEditor} from "./TagEditor";
@@ -33,6 +34,7 @@ interface BaseDatasetsPageProps {
   isTagSearching?: boolean;
   onSetTag?: (datasetId: string, tag: string) => Promise<void>;
   onRemoveTag?: (datasetId: string) => Promise<void>;
+  onDeleteDataset?: (datasetId: string) => Promise<void>;
 }
 
 type ViewMode = 'cards' | 'table';
@@ -59,6 +61,7 @@ export const BaseDatasetsPage: FC<BaseDatasetsPageProps> = ({
   isTagSearching = false,
   onSetTag,
   onRemoveTag,
+  onDeleteDataset,
 }) => {
   const [selectedDataset, setSelectedDataset] = useState<Dataset | null>(null);
   const [isLoadingDataset, setIsLoadingDataset] = useState(false);
@@ -66,6 +69,8 @@ export const BaseDatasetsPage: FC<BaseDatasetsPageProps> = ({
   const [isPermissionsModalOpen, setIsPermissionsModalOpen] = useState(false);
   const [datasetForPermissions, setDatasetForPermissions] = useState<Dataset | null>(null);
   const [editingTagDatasetId, setEditingTagDatasetId] = useState<string | null>(null);
+  const [datasetToDelete, setDatasetToDelete] = useState<Dataset | null>(null);
+  const [isDeleting, setIsDeleting] = useState(false);
 
   const handleViewDataset = async (dataset: Dataset) => {
     setIsLoadingDataset(true);
@@ -98,6 +103,20 @@ export const BaseDatasetsPage: FC<BaseDatasetsPageProps> = ({
   const handleRemoveTag = async (datasetId: string) => {
     if (onRemoveTag) {
       await onRemoveTag(datasetId);
+    }
+  };
+
+  const handleDeleteDataset = async () => {
+    if (datasetToDelete && onDeleteDataset) {
+      setIsDeleting(true);
+      try {
+        await onDeleteDataset(datasetToDelete.id);
+        setDatasetToDelete(null);
+      } catch (error) {
+        console.error("Ошибка удаления датасета:", error);
+      } finally {
+        setIsDeleting(false);
+      }
     }
   };
 
@@ -286,6 +305,17 @@ export const BaseDatasetsPage: FC<BaseDatasetsPageProps> = ({
                                 Управление доступом
                               </button>
                             )}
+                            {onDeleteDataset && (
+                              <button
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  setDatasetToDelete(dataset);
+                                }}
+                                className="w-full px-4 py-2 rounded-md font-medium text-sm transition-colors duration-200 focus:outline-none text-red-600 bg-red-50 border border-red-200 hover:bg-red-100 shadow-sm"
+                              >
+                                Удалить
+                              </button>
+                            )}
                           </div>
                         </div>
                       </div>
@@ -317,6 +347,11 @@ export const BaseDatasetsPage: FC<BaseDatasetsPageProps> = ({
                           <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                             Индексирован
                           </th>
+                          {onDeleteDataset && (
+                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                              Действия
+                            </th>
+                          )}
                         </tr>
                       </thead>
                       <tbody className="bg-white divide-y divide-gray-200">
@@ -355,6 +390,16 @@ export const BaseDatasetsPage: FC<BaseDatasetsPageProps> = ({
                             <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                               {dataset.indexed_at ? formatDate(dataset.indexed_at) : '—'}
                             </td>
+                            {onDeleteDataset && (
+                              <td className="px-6 py-4 whitespace-nowrap">
+                                <button
+                                  onClick={() => setDatasetToDelete(dataset)}
+                                  className="text-red-600 hover:text-red-800 text-sm font-medium"
+                                >
+                                  Удалить
+                                </button>
+                              </td>
+                            )}
                           </tr>
                         ))}
                       </tbody>
@@ -397,6 +442,16 @@ export const BaseDatasetsPage: FC<BaseDatasetsPageProps> = ({
           dataset={datasetForPermissions}
         />
       )}
+
+      {/* Confirm Delete Modal */}
+      <ConfirmDeleteModal
+        isOpen={!!datasetToDelete}
+        title="Удалить датасет?"
+        message={`Вы уверены, что хотите удалить датасет "${datasetToDelete?.title}"? Это действие нельзя отменить.`}
+        isDeleting={isDeleting}
+        onConfirm={handleDeleteDataset}
+        onCancel={() => setDatasetToDelete(null)}
+      />
     </Layout>
   );
 };

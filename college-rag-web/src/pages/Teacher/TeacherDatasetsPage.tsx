@@ -20,6 +20,7 @@ export const TeacherDatasetsPage: FC = () => {
     tagSearchTotal,
     isTagSearching,
     clearTagSearch,
+    deleteDataset,
   } = useDatasetStore();
   const [currentPage, setCurrentPage] = useState(1);
   const [isTagSearchActive, setIsTagSearchActive] = useState(false);
@@ -64,6 +65,7 @@ export const TeacherDatasetsPage: FC = () => {
       isTagSearching={isTagSearching}
       onSetTag={setDatasetTag}
       onRemoveTag={removeDatasetTag}
+      onDeleteDataset={deleteDataset}
     />
   );
 };
